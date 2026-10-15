@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#120724">
+<meta name="description" content="Festa de XV anos da Ana Luísa: galeria de fotos e vídeos dos convidados.">
+<title>XV Ana Luísa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap">
+<style>
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+img { max-width: 100%; }
+</style>
+</head>
+<body>
+
+<style>
+/* Layout: duas telas. 1) Boas-vindas: abertura com lanternas, três passos em
+   linha (ícone fino + legenda curta, sem caixa), campo de nome e Prosseguir.
+   2) App: galeria em exposição com fotos e bumerangues de até 6 s, barra
+   inferior com o "+" (foto ou vídeo). Brilhos piscando em tudo.
+   No computador não há "+" nem nome: é só para ver. */
+:root {
+  color-scheme: dark;
+  --noite: #1a0b30;
+  --violeta: #2c1250;
+  --lilas: #c9aef0;
+  --perola: #fbf6ee;
+  --ouro: #e3b33d;
+  --ouro-claro: #f7dc8e;
+  --linha: rgba(201, 174, 240, .2);
+  --f-nome: "Great Vibes", "Snell Roundhand", "Segoe Script", cursive;
+  --f-serif: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --f-corpo: "Jost", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --gl: max(16px, env(safe-area-inset-left, 0px));
+  --gr: max(16px, env(safe-area-inset-right, 0px));
+  --nav-h: 68px;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body {
+  background:
+    radial-gradient(ellipse 120% 55% at 50% 0%, #2a1150 0%, transparent 60%),
+    linear-gradient(180deg, #120724 0%, var(--noite) 45%, #1f0d39 100%) fixed;
+  background-color: var(--noite);
+  color: var(--perola);
+  font-family: var(--f-corpo); font-weight: 300; font-size: 16px; line-height: 1.6;
+  overflow-x: hidden;
+}
+button, input { font: inherit; }
+:focus-visible { outline: 2px solid var(--ouro-claro); outline-offset: 3px; border-radius: 6px; }
+#brilhos { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.tela { position: relative; z-index: 1; animation: surgir .5s ease; }
+@keyframes surgir { from { opacity: 0; } }
+.rotulo { font-weight: 500; font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: var(--lilas); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ================= Tela 0: abertura (toque para entrar) ================= */
+.abertura {
+  min-height: 100svh; position: relative; overflow: hidden; display: grid; place-items: center;
+  text-align: center; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  background: radial-gradient(ellipse 70% 50% at 50% 42%, rgba(227,179,61,.14), transparent 70%);
+}
+.abertura .conteudo {
+  position: relative; display: grid; justify-items: center; gap: 12px;
+  padding-block: 40px; padding-left: var(--gl); padding-right: var(--gr);
+  transition: transform 1s cubic-bezier(.5,0,.75,0), opacity .8s ease, filter .8s ease;
+}
+.frase { font-family: var(--f-serif); font-style: italic; font-size: 1.25rem; color: var(--lilas); max-width: 26ch; margin: 0; text-wrap: balance; }
+.convite {
+  margin-top: 34px; display: grid; justify-items: center; gap: 10px;
+  font: 500 .74rem/1.4 var(--f-corpo); letter-spacing: .24em; text-transform: uppercase; color: var(--ouro-claro);
+  background: none; border: 0; cursor: pointer; padding: 8px 12px;
+}
+.convite .chama {
+  width: 14px; height: 20px; border-radius: 3px 3px 5px 5px;
+  background: linear-gradient(180deg, #fff1c2, #ec9a32); box-shadow: 0 0 22px 8px rgba(255,190,80,.45);
+  animation: respirar 2.6s ease-in-out infinite;
+}
+@keyframes respirar { 50% { transform: translateY(-6px); box-shadow: 0 0 30px 12px rgba(255,190,80,.6); } }
+.convite span { animation: piscar 2.6s ease-in-out infinite; }
+@keyframes piscar { 50% { opacity: .55; } }
+/* saída: o conteúdo sobe e some junto com a lanterna */
+.abertura.saindo .conteudo { transform: translateY(-38vh) scale(.92); opacity: 0; filter: blur(6px); }
+.abertura.saindo .sol { opacity: 0; transition: opacity .9s ease; }
+.cortina {
+  position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 60%), rgba(255,226,160,.9), rgba(247,220,142,.35) 25%, rgba(26,11,48,0) 60%);
+}
+.cortina.on { animation: clarão 1.5s ease forwards; }
+@keyframes clarão { 0% { opacity: 0; } 45% { opacity: 1; } 100% { opacity: 0; } }
+
+/* ================= Tela 1: boas-vindas ================= */
+.boas { min-height: 100svh; position: relative; overflow: hidden; display: grid; align-content: center; }
+#lanternas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sol {
+  position: absolute; width: min(560px, 135vw); aspect-ratio: 1;
+  left: 50%; top: 30%; translate: -50% -50%; opacity: .1; color: var(--ouro);
+  animation: girar 180s linear infinite;
+}
+@keyframes girar { to { rotate: 360deg; } }
+.boas-conteudo {
+  position: relative; display: grid; justify-items: center; text-align: center; gap: 10px;
+  width: 100%; max-width: 460px; margin: 0 auto;
+  padding-block: 48px 40px; padding-left: var(--gl); padding-right: var(--gr);
+}
+.xv {
+  font-family: var(--f-serif); font-weight: 500; font-size: 1.05rem;
+  letter-spacing: .55em; padding-left: .55em; color: var(--ouro-claro);
+  display: flex; align-items: center; gap: 14px; margin: 0;
+}
+.xv::before, .xv::after { content: ""; width: 36px; height: 1px; background: linear-gradient(90deg, transparent, var(--ouro)); }
+.xv::after { transform: scaleX(-1); }
+.nome {
+  font-family: var(--f-nome); font-weight: 400; line-height: 1.1; margin: 0;
+  font-size: clamp(4.2rem, 19vw, 9rem); padding: .05em .2em .12em;
+  color: var(--ouro-claro);
+  background: linear-gradient(180deg, #fff3cf 10%, var(--ouro-claro) 45%, #d9a93a 95%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 18px rgba(247, 220, 142, .28));
+}
+
+/* Passos: três colunas, ícone de traço fino ligado por uma linha pontilhada */
+.boas .nome { font-size: clamp(3.2rem, 14vw, 5rem); }
+.boas .titulo-passos { margin: 26px 0 0; font-family: var(--f-serif); font-style: italic; font-size: 1.2rem; color: var(--lilas); }
+.passos {
+  list-style: none; margin: 22px 0 18px; padding: 0; width: 100%;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+  position: relative;
+}
+.passos::before {
+  content: ""; position: absolute; top: 23px; left: 16.66%; right: 16.66%; height: 1px;
+  background: repeating-linear-gradient(90deg, rgba(247,220,142,.45) 0 3px, transparent 3px 8px);
+}
+.passos li { display: grid; justify-items: center; gap: 10px; text-align: center; min-width: 0; }
+.passos .icone {
+  position: relative; width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center; color: var(--ouro-claro);
+  background: var(--noite); border: 1px solid rgba(247,220,142,.5);
+  box-shadow: 0 0 18px rgba(247,220,142,.14);
+}
+.passos .icone.cheio { background: radial-gradient(circle at 35% 30%, #fff3cf, var(--ouro-claro) 45%, var(--ouro)); color: #2a1404; border: 0; }
+.passos .icone svg { width: 21px; height: 21px; }
+.passos b { display: block; font-weight: 500; font-size: .86rem; line-height: 1.25; color: var(--perola); letter-spacing: .01em; }
+.passos small { display: block; font-size: .76rem; line-height: 1.35; color: var(--lilas); margin-top: 2px; }
+
+.entrar { width: 100%; display: grid; gap: 10px; margin-top: 6px; }
+.entrar label { text-align: left; font-size: .85rem; color: var(--lilas); }
+.entrar input {
+  width: 100%; padding: 15px 18px; border-radius: 14px; font-size: 1rem; color: var(--perola);
+  background: rgba(15, 6, 32, .7); border: 1px solid var(--linha); outline: none;
+}
+.entrar input::placeholder { color: rgba(201,174,240,.55); }
+.entrar input:focus { border-color: var(--ouro-claro); }
+.erro { color: #ffc7c7; font-size: .85rem; text-align: left; margin: 0; }
+.btn {
+  font-weight: 500; font-size: 1rem; letter-spacing: .03em; text-decoration: none; text-align: center;
+  padding: 16px 24px; border-radius: 999px; cursor: pointer; border: 1px solid transparent;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.btn-ouro { background: linear-gradient(180deg, var(--ouro-claro), var(--ouro)); color: #2a1404; box-shadow: 0 8px 28px rgba(227,179,61,.3); }
+.btn-ouro:active { transform: scale(.98); }
+.btn-sec { background: transparent; color: var(--perola); border-color: var(--linha); }
+.so-pc { display: none; }
+
+/* ================= Tela 2: app ================= */
+/* sem z-index próprio: a barra e o "+" precisam ficar acima do fundo escuro das folhas */
+.app { z-index: auto; animation: none; padding-bottom: calc(var(--nav-h) + 24px + env(safe-area-inset-bottom, 0px)); min-height: 100svh; }
+.topo-app {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 12px var(--gr) 12px var(--gl);
+  background: rgba(18, 7, 36, .78); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--linha);
+}
+.topo-app .marca { font-family: var(--f-nome); font-size: 1.85rem; line-height: 1; color: var(--ouro-claro); }
+.topo-app .marca small { font-family: var(--f-serif); font-size: .8rem; letter-spacing: .3em; color: var(--lilas); margin-left: 6px; }
+.ola { font-size: .82rem; color: var(--lilas); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ola b { color: var(--perola); font-weight: 400; }
+
+.exposicao { max-width: 1240px; margin: 0 auto; padding: 28px var(--gr) 0 var(--gl); }
+.parede { column-count: 2; column-gap: 8px; }
+.foto { break-inside: avoid; margin: 0 0 8px; padding: 0; border: 0; display: block; width: 100%; cursor: zoom-in; border-radius: 4px; overflow: hidden; background: var(--violeta); position: relative; }
+.foto img, .foto video { display: block; width: 100%; height: auto; transition: opacity .3s ease; }
+.foto.nova { box-shadow: 0 0 0 2px var(--ouro-claro); }
+.selo {
+  position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(15,6,32,.55); color: var(--perola);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.selo svg { width: 15px; height: 15px; }
+.aviso { margin: 18px 0 0; font-size: .78rem; color: var(--lilas); opacity: .75; text-align: center; }
+
+/* Barra inferior */
+.nav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  padding: 0 var(--gr) env(safe-area-inset-bottom, 0px) var(--gl);
+  background: rgba(18, 7, 36, .88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--linha);
+}
+.nav ul { list-style: none; margin: 0 auto; padding: 0; max-width: 420px; height: var(--nav-h); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+.nav button.item {
+  display: grid; justify-items: center; gap: 3px; background: none; border: 0; cursor: pointer;
+  font-size: .68rem; letter-spacing: .04em; color: rgba(201,174,240,.75); padding: 6px 0; width: 100%;
+}
+.nav button.item svg { width: 23px; height: 23px; }
+.nav button.item[aria-current="true"] { color: var(--ouro-claro); }
+.mais {
+  width: 62px; height: 62px; margin-top: -26px; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer; border: 3px solid var(--noite);
+  background: radial-gradient(circle at 35% 30%, #fff3cf, var(--ouro-claro) 40%, var(--ouro));
+  color: #2a1404; box-shadow: 0 0 0 1px rgba(247,220,142,.5), 0 8px 26px rgba(227,179,61,.45);
+  transition: transform .25s ease;
+}
+.mais:active { transform: scale(.94); }
+.mais svg { width: 28px; height: 28px; }
+
+/* ================= Câmera própria (estilo IG/TikTok) ================= */
+.camera { position: fixed; inset: 0; z-index: 55; background: #000; color: #fff; overflow: hidden; touch-action: none; }
+.cam-visor { position: absolute; inset: 0; }
+.cam-visor video, .cam-visor img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cam-visor img { animation: mirar 14s ease-in-out infinite alternate; transform-origin: 55% 45%; }
+@keyframes mirar { from { transform: scale(1.12) translate(-1%, 1%); } to { transform: scale(1.2) translate(2%, -2%); } }
+.cam-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+.cam-flash.on { animation: flash .45s ease-out; }
+@keyframes flash { 0% { opacity: .95; } 100% { opacity: 0; } }
+.cam-topo {
+  position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) var(--gr) 24px var(--gl);
+  background: linear-gradient(rgba(0,0,0,.45), transparent);
+}
+.cam-btn { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(0,0,0,.28); border: 0; color: #fff; cursor: pointer; }
+.cam-btn svg { width: 24px; height: 24px; }
+.cam-tempo {
+  font: 500 .9rem/1 var(--f-corpo); font-variant-numeric: tabular-nums; padding: 8px 12px; border-radius: 999px;
+  background: rgba(220, 38, 38, .9); display: inline-flex; align-items: center; gap: 6px;
+}
+.cam-tempo::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #fff; }
+.cam-base {
+  position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 14px; justify-items: center;
+  padding: 40px var(--gr) calc(22px + env(safe-area-inset-bottom, 0px)) var(--gl);
+  background: linear-gradient(transparent, rgba(0,0,0,.6));
+}
+.cam-modos { display: flex; gap: 22px; }
+.cam-modos button {
+  background: none; border: 0; cursor: pointer; padding: 6px 2px; color: rgba(255,255,255,.65);
+  font: 500 .8rem/1 var(--f-corpo); letter-spacing: .16em; text-transform: uppercase; position: relative;
+}
+.cam-modos button[aria-selected="true"] { color: var(--ouro-claro); }
+.cam-modos button[aria-selected="true"]::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--ouro-claro); }
+.cam-controles { width: 100%; max-width: 360px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+.cam-rolo {
+  justify-self: start; width: 46px; height: 46px; border-radius: 12px; cursor: pointer; overflow: hidden;
+  border: 2px solid rgba(255,255,255,.85); background: center / cover no-repeat; display: grid; place-items: center;
+}
+.cam-rolo:focus-within { outline: 2px solid var(--ouro-claro); outline-offset: 3px; }
+.obturador {
+  position: relative; width: 86px; height: 86px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+  background: none; display: grid; place-items: center; -webkit-tap-highlight-color: transparent; touch-action: none;
+}
+.obturador .anel { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.obturador .trilho { fill: none; stroke: rgba(255,255,255,.9); stroke-width: 5; }
+.obturador .progresso { fill: none; stroke: var(--ouro-claro); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 289; stroke-dashoffset: 289; }
+.obturador .miolo { width: 66px; height: 66px; border-radius: 50%; background: #fff; transition: all .2s ease; }
+.camera[data-modo="video"] .obturador .miolo { background: #e3343f; }
+.camera.gravando .obturador .trilho { stroke: rgba(255,255,255,.35); }
+.camera.gravando .obturador { transform: scale(1.12); }
+.camera.gravando .obturador .miolo { width: 34px; height: 34px; border-radius: 9px; }
+.camera.gravando .cam-modos, .camera.gravando .cam-rolo { opacity: 0; pointer-events: none; }
+.obturador:active .miolo { transform: scale(.93); }
+.cam-dica { margin: 0; font-size: .8rem; color: rgba(255,255,255,.8); text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+.cam-dica.balanca { animation: balanca .4s ease; color: var(--ouro-claro); }
+@keyframes balanca { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.cam-aviso { position: absolute; top: calc(66px + env(safe-area-inset-top, 0px)); left: 50%; translate: -50% 0; font-size: .7rem; letter-spacing: .08em; color: rgba(255,255,255,.75); background: rgba(0,0,0,.35); padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+
+/* Revisão depois de capturar */
+.cam-revisao { position: absolute; inset: 0; background: #0a0416; display: grid; grid-template-rows: minmax(0,1fr) auto; }
+.rev-midia { display: grid; place-items: center; min-height: 0; padding: calc(14px + env(safe-area-inset-top, 0px)) var(--gr) 0 var(--gl); }
+.rev-midia img, .rev-midia video { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 14px; }
+.rev-base { display: grid; gap: 14px; padding: 18px var(--gr) calc(18px + env(safe-area-inset-bottom, 0px)) var(--gl); }
+.rev-base p { margin: 0; text-align: center; color: var(--lilas); font-size: .9rem; }
+.rev-base p b { font-family: var(--f-nome); font-weight: 400; font-size: 1.6rem; color: var(--ouro-claro); }
+
+/* Folhas (envio e "como usar") */
+.folha-fundo { position: fixed; inset: 0; z-index: 29; background: rgba(8,3,18,.6); }
+.folha {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 41; max-height: 88svh; overflow-y: auto;
+  background: #22103e; border-radius: 22px 22px 0 0; border-top: 1px solid var(--linha);
+  padding: 10px var(--gr) calc(18px + env(safe-area-inset-bottom, 0px)) var(--gl);
+  display: grid; gap: 16px; animation: subir .3s ease; max-width: 560px; margin: 0 auto;
+}
+.folha-fundo.alto { z-index: 40; }
+@keyframes subir { from { transform: translateY(30px); opacity: 0; } }
+.folha .alca { width: 40px; height: 4px; border-radius: 4px; background: var(--linha); justify-self: center; }
+.folha h2 { font-family: var(--f-serif); font-weight: 500; font-size: 1.5rem; margin: 0; }
+.folha p { margin: 0; color: var(--lilas); font-size: .9rem; }
+.folha .passos { margin: 6px 0 4px; }
+.folha .passos .icone:not(.cheio) { background: #22103e; }
+.previa { width: 100%; max-height: 50svh; object-fit: contain; border-radius: 12px; background: #120724; display: block; }
+.linha-btns { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; }
+
+.toast {
+  position: fixed; z-index: 45; left: 50%; translate: -50% 0;
+  bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom, 0px));
+  background: var(--perola); color: #2a1404; font-size: .88rem; font-weight: 500;
+  padding: 12px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  width: max-content; max-width: calc(100vw - 32px); text-align: center;
+}
+.toast.erro-t { background: #ffd9d9; color: #4a0d0d; }
+
+/* Lightbox: legenda é só o nome de quem registrou */
+.lightbox {
+  position: fixed; inset: 0; z-index: 50; display: grid; grid-template-rows: auto minmax(0,1fr) auto;
+  background: #0a0416;
+  padding: max(10px, env(safe-area-inset-top, 0px)) var(--gr) max(14px, env(safe-area-inset-bottom, 0px)) var(--gl);
+}
+.lb-topo, .lb-base { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 6px; }
+.lb-palco { display: grid; place-items: center; min-height: 0; }
+.lb-palco img, .lb-palco video { max-width: 100%; max-height: calc(100svh - 150px); object-fit: contain; border-radius: 4px; }
+.lightbox button { color: var(--lilas); background: none; border: 0; padding: 10px 8px; cursor: pointer; font-size: .9rem; }
+.lb-nav button { font-size: 1.35rem; }
+.lb-autor { margin: 0; font-family: var(--f-nome); font-size: 2rem; line-height: 1.1; color: var(--ouro-claro); min-width: 0; }
+.lb-autor::before { content: "por "; font-family: var(--f-serif); font-style: italic; font-size: 1rem; color: var(--lilas); }
+.lb-nav { display: flex; gap: 6px; flex: none; }
+
+/* ================= Computador: só visualização ================= */
+@media (min-width: 900px) {
+  .so-celular { display: none !important; }
+  .so-pc { display: block; }
+  .nav, .camera { display: none !important; }
+  .app { padding-bottom: 48px; }
+  .xv { font-size: 1.3rem; }
+  .boas-conteudo { max-width: 620px; }
+  .exposicao { padding-top: 48px; }
+  .parede { column-count: 3; column-gap: 22px; }
+  .foto { margin-bottom: 22px; }
+  .foto:hover img, .foto:hover video { opacity: .88; }
+}
+@media (min-width: 1250px) { .parede { column-count: 4; } }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 31; background: #120724; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sol, .tela, .folha, .cam-visor img, .convite .chama, .convite span { animation: none; }
+  .abertura .conteudo { transition: opacity .4s ease; }
+  .abertura.saindo .conteudo { transform: none; filter: none; }
+  .btn, .mais, .foto img { transition: none; }
+}
+</style>
+
+<canvas id="brilhos" aria-hidden="true"></canvas>
+
+<!-- Ícones reaproveitados -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.7l1.3-2h5l1.3 2h1.7A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.4"/></g></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="12.5" height="11" rx="2.5"/><path d="m15.5 10.5 5-3v9l-5-3"/></g></symbol>
+  <symbol id="i-loop" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a5 5 0 0 1 5-5h9"/><path d="m15 4 3 3-3 3"/><path d="M20 12a5 5 0 0 1-5 5H6"/><path d="m9 20-3-3 3-3"/></g></symbol>
+  <symbol id="i-galeria" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="9" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="5.5" rx="1.5"/><rect x="3" y="15" width="7.5" height="6" rx="1.5"/><rect x="13.5" y="11.5" width="7.5" height="9.5" rx="1.5"/></g></symbol>
+  <symbol id="i-mais" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+</svg>
+
+<!-- ================= Tela 0: abertura ================= -->
+<section class="tela abertura" id="abertura" aria-labelledby="t-abertura">
+  <canvas id="lanternas" aria-hidden="true"></canvas>
+  <svg class="sol" viewBox="-100 -100 200 200" aria-hidden="true">
+    <defs><path id="raio" d="M0-50 C6-60 4-72 12-86 C2-80 -2-70 -6-62 C-10-70 -12-78 -10-90 C-18-74 -12-62 0-50Z"/></defs>
+    <g fill="currentColor">
+      <circle r="44"/>
+      <g id="raios">
+        <use href="#raio"/><use href="#raio" transform="rotate(22.5)"/><use href="#raio" transform="rotate(45)"/><use href="#raio" transform="rotate(67.5)"/>
+        <use href="#raio" transform="rotate(90)"/><use href="#raio" transform="rotate(112.5)"/><use href="#raio" transform="rotate(135)"/><use href="#raio" transform="rotate(157.5)"/>
+      </g>
+      <use href="#raios" transform="rotate(180)"/>
+    </g>
+  </svg>
+  <div class="conteudo">
+    <p class="rotulo">Você está convidado para</p>
+    <p class="xv">XV ANOS</p>
+    <h1 class="nome" id="t-abertura">Ana Luísa</h1>
+    <p class="frase">Uma noite de lanternas, e cada foto sua guarda um pedaço dela.</p>
+    <button type="button" class="convite" id="entrar">
+      <i class="chama" aria-hidden="true"></i>
+      <span>Toque para acender a sua lanterna</span>
+    </button>
+  </div>
+</section>
+<div class="cortina" id="cortina" aria-hidden="true"></div>
+
+<!-- ================= Tela 1: boas-vindas ================= -->
+<section class="tela boas" id="boas" aria-labelledby="t-nome" hidden>
+  <div class="boas-conteudo">
+    <p class="xv">XV ANOS</p>
+    <h2 class="nome" id="t-nome">Ana Luísa</h2>
+    <p class="titulo-passos">Antes de entrar na festa</p>
+    <ol class="passos so-celular" aria-label="Como funciona">
+      <li><span class="icone cheio"><svg aria-hidden="true"><use href="#i-mais"/></svg></span>
+        <span><b>Toque no +</b><small>na barra de baixo</small></span></li>
+      <li><span class="icone"><svg aria-hidden="true"><use href="#i-camera"/></svg></span>
+        <span><b>Foto ou vídeo</b><small>vídeos de até 6 s</small></span></li>
+      <li><span class="icone"><svg aria-hidden="true"><use href="#i-galeria"/></svg></span>
+        <span><b>Vai pra galeria</b><small>assinado por você</small></span></li>
+    </ol>
+
+    <form class="entrar so-celular" id="form-nome" novalidate>
+      <label for="seu-nome">Como você se chama?</label>
+      <input id="seu-nome" name="nome" type="text" autocomplete="given-name" maxlength="40" placeholder="Seu nome" enterkeyhint="go">
+      <p class="erro" id="erro-nome" hidden>Digite seu nome para continuar.</p>
+      <button class="btn btn-ouro" type="submit">Prosseguir</button>
+    </form>
+
+  </div>
+</section>
+
+<!-- ================= Tela 2: app ================= -->
+<div class="tela app" id="app" hidden>
+  <header class="topo-app">
+    <span class="marca">Ana Luísa<small>XV</small></span>
+    <span class="ola so-celular" id="ola"></span>
+  </header>
+
+  <main class="exposicao" aria-label="Galeria de fotos e vídeos da festa">
+    <div class="parede" id="parede"></div>
+    <p class="aviso">Prévia com fotos, vídeo e nomes de exemplo, feitos a partir da referência de decoração.</p>
+  </main>
+
+  <nav class="nav" aria-label="Navegação">
+    <ul>
+      <li><button class="item" type="button" id="nav-galeria" aria-current="true">
+        <svg aria-hidden="true"><use href="#i-galeria"/></svg>Galeria</button></li>
+      <li><button class="mais" type="button" id="mais" aria-controls="camera">
+        <svg aria-hidden="true"><use href="#i-mais"/></svg><span class="sr">Abrir câmera</span></button></li>
+      <li><button class="item" type="button" id="nav-ajuda">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.6-.8 1.1V14"/><path d="M12 17.2v.1"/></svg>Como usar</button></li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Câmera própria -->
+<div class="camera" id="camera" data-modo="foto" role="dialog" aria-modal="true" aria-label="Câmera" hidden>
+  <div class="cam-visor">
+    <video id="cam-ao-vivo" playsinline muted autoplay hidden></video>
+    <img id="cam-simulada" src="assets/decoracao.jpg" alt="" hidden>
+    <div class="cam-flash" id="cam-flash"></div>
+  </div>
+  <div class="cam-topo">
+    <button class="cam-btn" type="button" id="cam-fechar" aria-label="Fechar câmera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <span class="cam-tempo" id="cam-tempo" hidden>0,0 s</span>
+    <button class="cam-btn" type="button" id="cam-virar" aria-label="Virar câmera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9a8 8 0 0 1 14.3-3.3L20 8"/><path d="M20 4v4h-4"/><path d="M20 15a8 8 0 0 1-14.3 3.3L4 16"/><path d="M4 20v-4h4"/></svg></button>
+  </div>
+  <span class="cam-aviso" id="cam-aviso" hidden>Prévia: câmera simulada</span>
+  <div class="cam-base">
+    <div class="cam-modos" role="tablist" aria-label="Modo">
+      <button type="button" role="tab" aria-selected="true" data-modo="foto">Foto</button>
+      <button type="button" role="tab" aria-selected="false" data-modo="video">Vídeo</button>
+    </div>
+    <div class="cam-controles">
+      <label class="cam-rolo" id="cam-rolo" aria-label="Escolher da galeria do celular">
+        <input id="cam-arquivo" type="file" accept="image/*,video/*" class="sr">
+      </label>
+      <button type="button" class="obturador" id="obturador" aria-label="Tirar foto">
+        <svg class="anel" viewBox="0 0 100 100" aria-hidden="true"><circle class="trilho" cx="50" cy="50" r="46"/><circle class="progresso" id="anel" cx="50" cy="50" r="46"/></svg>
+        <span class="miolo"></span>
+      </button>
+      <span></span>
+    </div>
+    <p class="cam-dica" id="cam-dica">Toque para fotografar</p>
+  </div>
+
+  <div class="cam-revisao" id="cam-revisao" hidden>
+    <div class="rev-midia" id="rev-midia"></div>
+    <div class="rev-base">
+      <p id="rev-legenda"></p>
+      <div class="linha-btns">
+        <button type="button" class="btn btn-sec" id="refazer">Refazer</button>
+        <button type="button" class="btn btn-ouro" id="publicar">Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Folhas -->
+<div class="folha-fundo" id="folha-fundo" hidden></div>
+<div class="folha" id="folha-ajuda" role="dialog" aria-modal="true" aria-labelledby="t-ajuda" hidden>
+  <span class="alca" aria-hidden="true"></span>
+  <h2 id="t-ajuda">Como usar</h2>
+  <ol class="passos">
+    <li><span class="icone cheio"><svg aria-hidden="true"><use href="#i-mais"/></svg></span>
+      <span><b>Toque no +</b><small>na barra de baixo</small></span></li>
+    <li><span class="icone"><svg aria-hidden="true"><use href="#i-camera"/></svg></span>
+      <span><b>Foto ou vídeo</b><small>vídeos de até 6 s</small></span></li>
+    <li><span class="icone"><svg aria-hidden="true"><use href="#i-galeria"/></svg></span>
+      <span><b>Vai pra galeria</b><small>assinado por você</small></span></li>
+  </ol>
+  <button type="button" class="btn btn-ouro" id="ajuda-ok">Entendi</button>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Foto ampliada" hidden>
+  <div class="lb-topo"><span class="rotulo" id="lb-contador"></span><button type="button" id="lb-fechar">Fechar ✕</button></div>
+  <div class="lb-palco" id="lb-palco"></div>
+  <div class="lb-base">
+    <p class="lb-autor" id="lb-autor"></p>
+    <div class="lb-nav"><button type="button" id="lb-ant" aria-label="Anterior">←</button><button type="button" id="lb-prox" aria-label="Próxima">→</button></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dprMax = () => Math.min(devicePixelRatio || 1, 2);
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const VIDEO_MAX_S = 6;
+
+  /* ---------- Nome salvo no aparelho (sem senha, sem sair) ---------- */
+  const CHAVE = "xv-ana-luisa:nome";
+  const lerNome = () => { try { return localStorage.getItem(CHAVE) || ""; } catch { return ""; } };
+  const salvarNome = n => { try { localStorage.setItem(CHAVE, n); } catch {} };
+  let meuNome = lerNome();
+
+  /* ---------- Brilhos: estrelinhas piscando devagar ---------- */
+  const bc = $("brilhos"), bx = bc.getContext("2d");
+  let BW = 0, BH = 0, brilhos = [];
+  const CORES = ["255,248,230", "247,220,142", "214,190,255"];
+  function medirBrilhos() {
+    const d = dprMax(); BW = innerWidth; BH = innerHeight;
+    bc.width = BW * d; bc.height = BH * d; bx.setTransform(d, 0, 0, d, 0, 0);
+    const n = Math.round(Math.min(140, Math.max(45, BW * BH / 9000)));
+    brilhos = Array.from({ length: n }, () => ({
+      x: Math.random() * BW, y: Math.random() * BH,
+      r: Math.random() < .18 ? 3 + Math.random() * 3.5 : .6 + Math.random() * 1.4,
+      p: 3500 + Math.random() * 5000, f: Math.random() * Math.PI * 2,
+      c: CORES[Math.random() < .5 ? 0 : Math.random() < .6 ? 1 : 2]
+    }));
+  }
+  function estrela(x, y, r, a, c) {
+    if (r > 2.5) {
+      const g = bx.createRadialGradient(x, y, 0, x, y, r * 3);
+      g.addColorStop(0, `rgba(${c},${a * .35})`); g.addColorStop(1, `rgba(${c},0)`);
+      bx.fillStyle = g; bx.beginPath(); bx.arc(x, y, r * 3, 0, 7); bx.fill();
+      bx.fillStyle = `rgba(${c},${a})`; bx.beginPath();
+      bx.moveTo(x, y - r * 2); bx.quadraticCurveTo(x, y, x + r * 2, y); bx.quadraticCurveTo(x, y, x, y + r * 2);
+      bx.quadraticCurveTo(x, y, x - r * 2, y); bx.quadraticCurveTo(x, y, x, y - r * 2); bx.fill();
+    } else { bx.fillStyle = `rgba(${c},${a})`; bx.beginPath(); bx.arc(x, y, r, 0, 7); bx.fill(); }
+  }
+  function quadroBrilhos(t) {
+    bx.clearRect(0, 0, BW, BH);
+    for (const b of brilhos) {
+      const a = reduz ? .55 : Math.pow(.5 + .5 * Math.sin(t / b.p * Math.PI * 2 + b.f), 3);
+      if (a > .02) estrela(b.x, b.y, b.r, a * .9, b.c);
+    }
+    if (!reduz) requestAnimationFrame(quadroBrilhos);
+  }
+
+  /* ---------- Lanternas (boas-vindas) ---------- */
+  const lc = $("lanternas"), lx = lc.getContext("2d");
+  let LW = 0, LH = 0, lanternas = [], lanternasLigadas = true;
+  let acelera = 1;
+  const nova = (inicio) => ({ x: Math.random() * LW, y: inicio ? Math.random() * LH : LH + 30 + Math.random() * 60,
+    s: .45 + Math.random() * .9, v: .12 + Math.random() * .28, f: Math.random() * 6.28, a: .5 + Math.random() * .45 });
+  function medirLanternas() {
+    const d = dprMax(); LW = lc.clientWidth; LH = lc.clientHeight;
+    lc.width = LW * d; lc.height = LH * d; lx.setTransform(d, 0, 0, d, 0, 0);
+    lanternas = Array.from({ length: Math.round(Math.min(34, Math.max(12, LW * LH / 30000))) }, () => nova(true));
+  }
+  function quadroLanternas(t) {
+    if (!lanternasLigadas) return;
+    lx.clearRect(0, 0, LW, LH);
+    lanternas.sort((a, b) => a.s - b.s);
+    for (const l of lanternas) {
+      if (!reduz) { l.y -= l.v * l.s * (l.minha ? 1 : acelera); if (l.y < -40 && !l.minha) Object.assign(l, nova(false)); }
+      const x = l.x + Math.sin((reduz ? 0 : t) / 1800 + l.f) * 9 * l.s, y = l.y, w = 10 * l.s, h = 14 * l.s;
+      const g = lx.createRadialGradient(x, y, 0, x, y, 40 * l.s);
+      g.addColorStop(0, `rgba(255,190,80,${.38 * l.a})`); g.addColorStop(1, "rgba(255,170,60,0)");
+      lx.fillStyle = g; lx.beginPath(); lx.arc(x, y, 40 * l.s, 0, 7); lx.fill();
+      const c = lx.createLinearGradient(x, y - h / 2, x, y + h / 2);
+      c.addColorStop(0, `rgba(255,236,170,${l.a})`); c.addColorStop(1, `rgba(236,140,40,${l.a})`);
+      lx.fillStyle = c; lx.beginPath();
+      lx.moveTo(x - w * .42, y - h / 2); lx.lineTo(x + w * .42, y - h / 2); lx.lineTo(x + w * .5, y + h / 2); lx.lineTo(x - w * .5, y + h / 2); lx.fill();
+    }
+    if (!reduz) requestAnimationFrame(quadroLanternas);
+  }
+
+  /* ---------- Mídias de exemplo ---------- */
+  function fotoExemplo(w, h, seed, tons) {
+    const c = document.createElement("canvas"); c.width = w; c.height = h;
+    const x = c.getContext("2d"); let s = seed;
+    const r = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+    const g = x.createLinearGradient(0, 0, w * r(), h);
+    g.addColorStop(0, tons[0]); g.addColorStop(1, tons[1]); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 26; i++) {
+      const R = 10 + r() * w * .16, cx = r() * w, cy = r() * h, cor = r() > .45 ? "255,205,110" : "214,180,255";
+      const b = x.createRadialGradient(cx, cy, 0, cx, cy, R);
+      b.addColorStop(0, `rgba(${cor},${.25 + r() * .45})`); b.addColorStop(1, `rgba(${cor},0)`);
+      x.fillStyle = b; x.beginPath(); x.arc(cx, cy, R, 0, 7); x.fill();
+    }
+    return c.toDataURL("image/jpeg", .82);
+  }
+  // Bumerangue de exemplo (vai e volta, 6 s), também usado quando a câmera não está disponível
+  const DEMO_VIDEO = { src: "assets/bumerangue.mp4", webm: "assets/bumerangue.webm", capa: "assets/bumerangue-capa.jpg" };
+  const midias = [
+    { src: "assets/decoracao.jpg", w: 900, h: 1195, autor: "Ana Luísa" },
+    { w: 600, h: 420, autor: "Marina", tons: ["#3b1466", "#0f0620"], seed: 11 },
+    { w: 480, h: 600, autor: "Tio Carlos", tons: ["#5a2a8c", "#22103c"], seed: 7 },
+    { w: 600, h: 600, autor: "Marina", tons: ["#1d0b38", "#6b3aa8"], seed: 23 },
+    { w: 480, h: 680, autor: "Bia", tons: ["#2a0f4a", "#8a5a1c"], seed: 42 },
+    { tipo: "video", ...DEMO_VIDEO, w: 480, h: 640, autor: "Marina" },
+    { w: 600, h: 400, autor: "Tio Carlos", tons: ["#4a1d7a", "#1a0b30"], seed: 5 },
+    { w: 520, h: 660, autor: "Bia", tons: ["#7a4cc0", "#2c1250"], seed: 99 },
+    { w: 600, h: 480, autor: "Vó Lúcia", tons: ["#3a1868", "#a0742a"], seed: 61 },
+    { w: 480, h: 640, autor: "Pedro", tons: ["#25104a", "#5c3296"], seed: 77 }
+  ].map(m => ({ tipo: "foto", ...m, src: m.src || fotoExemplo(m.w, m.h, m.seed, m.tons) }));
+
+  const parede = $("parede");
+  const fontes = m => (m.webm ? `<source src="${m.webm}" type="video/webm">` : "") + `<source src="${m.src}"${m.webm ? ' type="video/mp4"' : ""}>`;
+  const loopSvg = '<span class="selo" aria-hidden="true"><svg><use href="#i-loop"/></svg></span>';
+  function montarParede() {
+    parede.innerHTML = midias.map((m, i) => `
+      <button type="button" class="foto${m.nova ? " nova" : ""}" data-i="${i}" aria-label="Abrir ${m.tipo === "video" ? "vídeo" : "foto"} de ${esc(m.autor)}">
+        ${m.tipo === "video"
+          ? (m.capa ? `<img src="${m.capa}" width="${m.w}" height="${m.h}" alt="Vídeo de ${esc(m.autor)}" decoding="async">`
+                    : `<video width="${m.w}" height="${m.h}" muted playsinline preload="metadata">${fontes(m)}</video>`) + loopSvg
+          : `<img src="${m.src}" width="${m.w}" height="${m.h}" alt="Foto de ${esc(m.autor)}" decoding="async">`}
+      </button>`).join("");
+  }
+
+  /* ---------- Troca de telas ---------- */
+  function abrirApp() {
+    $("abertura").hidden = true; $("boas").hidden = true; $("app").hidden = false;
+    lanternasLigadas = false;
+    $("ola").innerHTML = meuNome ? `Olá, <b>${esc(meuNome)}</b>` : "";
+    montarParede(); scrollTo(0, 0);
+  }
+  $("form-nome").addEventListener("submit", e => {
+    e.preventDefault();
+    const n = $("seu-nome").value.trim().replace(/\s+/g, " ");
+    if (n.length < 2) { $("erro-nome").hidden = false; $("seu-nome").focus(); return; }
+    meuNome = n; salvarNome(n); abrirApp();
+  });
+  $("seu-nome").addEventListener("input", () => $("erro-nome").hidden = true);
+
+  /* ---------- Lightbox ---------- */
+  const lb = $("lightbox"), palco = $("lb-palco");
+  let atual = 0, voltar = null;
+  function abrir(i) {
+    atual = (i + midias.length) % midias.length; const m = midias[atual];
+    palco.innerHTML = m.tipo === "video"
+      ? `<video muted loop playsinline autoplay aria-label="Vídeo de ${esc(m.autor)}">${fontes(m)}</video>`
+      : `<img src="${m.src}" alt="Foto de ${esc(m.autor)}">`;
+    $("lb-autor").textContent = m.autor;
+    $("lb-contador").textContent = `${atual + 1} / ${midias.length}`;
+    if (lb.hidden) { voltar = document.activeElement; lb.hidden = false; document.body.style.overflow = "hidden"; $("lb-fechar").focus(); }
+  }
+  function fechar() { lb.hidden = true; palco.innerHTML = ""; document.body.style.overflow = ""; voltar?.focus(); }
+  parede.addEventListener("click", e => { const f = e.target.closest(".foto"); if (f) abrir(+f.dataset.i); });
+  $("lb-fechar").onclick = fechar;
+  $("lb-ant").onclick = () => abrir(atual - 1);
+  $("lb-prox").onclick = () => abrir(atual + 1);
+  lb.addEventListener("click", e => { if (e.target === lb || e.target === palco) fechar(); });
+  let tx = 0; lb.addEventListener("touchstart", e => tx = e.touches[0].clientX, { passive: true });
+  lb.addEventListener("touchend", e => { const d = e.changedTouches[0].clientX - tx; if (Math.abs(d) > 50) abrir(atual + (d < 0 ? 1 : -1)); });
+
+  /* ---------- Toast ---------- */
+  function avisar(txt, erro) {
+    const t = $("toast"); t.textContent = txt; t.classList.toggle("erro-t", !!erro);
+    t.hidden = false; clearTimeout(t._t); t._t = setTimeout(() => t.hidden = true, erro ? 4200 : 2600);
+  }
+
+  /* ---------- Folha "Como usar" ---------- */
+  const fundo = $("folha-fundo");
+  let folhaAberta = null;
+  function abrirFolha(el, foco) { folhaAberta = el; el.hidden = false; fundo.hidden = false; fundo.classList.add("alto"); (foco || el).focus?.(); }
+  function fecharFolha() { if (folhaAberta) { folhaAberta.hidden = true; folhaAberta = null; } fundo.hidden = true; fundo.classList.remove("alto"); }
+  fundo.onclick = fecharFolha;
+
+  /* ---------- Câmera própria ---------- */
+  const cam = $("camera"), aoVivo = $("cam-ao-vivo"), simulada = $("cam-simulada"), obt = $("obturador"),
+        anel = $("anel"), tempo = $("cam-tempo"), dica = $("cam-dica"), revisao = $("cam-revisao"), revMidia = $("rev-midia");
+  const ANEL = 289;
+  let modo = "foto", fluxo = null, frente = false, gravando = false, t0 = 0, raf = 0, gravador = null, pedacos = [], capturado = null;
+  $("cam-rolo").style.backgroundImage = `url("${simulada.src}")`;
+
+  async function ligarCamera() {
+    pararFluxo();
+    try {
+      fluxo = await navigator.mediaDevices.getUserMedia({ video: { facingMode: frente ? "user" : "environment" }, audio: false });
+      aoVivo.srcObject = fluxo; aoVivo.hidden = false; simulada.hidden = true; $("cam-aviso").hidden = true;
+    } catch {
+      // Sem permissão (ou nesta prévia): visor simulado com a foto da decoração
+      fluxo = null; aoVivo.hidden = true; simulada.hidden = false; $("cam-aviso").hidden = false;
+    }
+  }
+  function pararFluxo() { fluxo?.getTracks().forEach(tr => tr.stop()); fluxo = null; }
+  function abrirCamera() {
+    cam.hidden = false; revisao.hidden = true; document.body.style.overflow = "hidden";
+    definirModo(modo); ligarCamera(); obt.focus();
+  }
+  function fecharCamera() { pararGravacao(true); pararFluxo(); cam.hidden = true; document.body.style.overflow = ""; $("mais").focus(); }
+  $("mais").onclick = abrirCamera;
+  $("cam-fechar").onclick = fecharCamera;
+  $("cam-virar").onclick = () => { frente = !frente; if (fluxo) ligarCamera(); };
+
+  function definirModo(m) {
+    modo = m; cam.dataset.modo = m;
+    cam.querySelectorAll(".cam-modos button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.modo === m)));
+    dica.textContent = m === "foto" ? "Toque para fotografar" : "Segure para gravar · até 6 s";
+    obt.setAttribute("aria-label", m === "foto" ? "Tirar foto" : "Segure para gravar vídeo");
+  }
+  cam.querySelector(".cam-modos").addEventListener("click", e => { const b = e.target.closest("button"); if (b && !gravando) definirModo(b.dataset.modo); });
+  // Deslizar no visor troca de modo, como no IG
+  let sx = 0; cam.addEventListener("touchstart", e => sx = e.touches[0].clientX, { passive: true });
+  cam.addEventListener("touchend", e => {
+    if (gravando || !revisao.hidden) return;
+    const d = e.changedTouches[0].clientX - sx; if (Math.abs(d) > 60) definirModo(d < 0 ? "video" : "foto");
+  });
+
+  /* Foto: toque */
+  function fotografar() {
+    const f = $("cam-flash"); f.classList.remove("on"); void f.offsetWidth; f.classList.add("on");
+    let src = simulada.src, w = 900, h = 1195;
+    if (fluxo && aoVivo.videoWidth) {
+      const c = document.createElement("canvas"); c.width = aoVivo.videoWidth; c.height = aoVivo.videoHeight;
+      c.getContext("2d").drawImage(aoVivo, 0, 0); src = c.toDataURL("image/jpeg", .88); w = c.width; h = c.height;
+    }
+    setTimeout(() => revisar({ tipo: "foto", src, w, h }), 280);
+  }
+
+  /* Vídeo: segurar; o anel enche até 6 s e para sozinho */
+  function iniciarGravacao() {
+    if (gravando) return;
+    gravando = true; t0 = performance.now(); cam.classList.add("gravando"); tempo.hidden = false; pedacos = [];
+    if (fluxo && window.MediaRecorder) {
+      try { gravador = new MediaRecorder(fluxo); gravador.ondataavailable = e => e.data.size && pedacos.push(e.data); gravador.start(); } catch { gravador = null; }
+    }
+    const passo = () => {
+      const s = (performance.now() - t0) / 1000;
+      anel.style.strokeDashoffset = String(ANEL * (1 - Math.min(s / VIDEO_MAX_S, 1)));
+      tempo.textContent = `${Math.min(s, VIDEO_MAX_S).toFixed(1).replace(".", ",")} s`;
+      if (s >= VIDEO_MAX_S) pararGravacao(); else raf = requestAnimationFrame(passo);
+    };
+    raf = requestAnimationFrame(passo);
+  }
+  function pararGravacao(descartar) {
+    if (!gravando) return;
+    gravando = false; cancelAnimationFrame(raf);
+    const s = (performance.now() - t0) / 1000;
+    cam.classList.remove("gravando"); tempo.hidden = true; anel.style.strokeDashoffset = String(ANEL);
+    const fim = () => {
+      if (descartar) return;
+      if (s < .6) { dica.textContent = "Segure o botão para gravar"; dica.classList.remove("balanca"); void dica.offsetWidth; dica.classList.add("balanca"); return; }
+      if (pedacos.length) {
+        const url = URL.createObjectURL(new Blob(pedacos, { type: gravador?.mimeType || "video/webm" }));
+        revisar({ tipo: "video", src: url, w: aoVivo.videoWidth || 480, h: aoVivo.videoHeight || 640 });
+      } else {
+        // Prévia sem câmera: usa o bumerangue de exemplo
+        revisar({ tipo: "video", ...DEMO_VIDEO, w: 480, h: 640 });
+      }
+    };
+    if (gravador && gravador.state !== "inactive") { gravador.onstop = fim; gravador.stop(); } else fim();
+    gravador = null;
+  }
+  obt.addEventListener("click", () => { if (modo === "foto") fotografar(); });
+  obt.addEventListener("pointerdown", e => { if (modo === "video") { e.preventDefault(); obt.setPointerCapture?.(e.pointerId); iniciarGravacao(); } });
+  ["pointerup", "pointercancel"].forEach(ev => obt.addEventListener(ev, () => { if (modo === "video") pararGravacao(); }));
+  obt.addEventListener("keydown", e => { if (modo === "video" && (e.key === " " || e.key === "Enter")) { e.preventDefault(); if (!e.repeat) iniciarGravacao(); } });
+  obt.addEventListener("keyup", e => { if (modo === "video" && (e.key === " " || e.key === "Enter")) pararGravacao(); });
+  obt.addEventListener("contextmenu", e => e.preventDefault());
+
+  /* Escolher do rolo do celular */
+  $("cam-arquivo").addEventListener("change", e => {
+    const arq = e.target.files && e.target.files[0]; e.target.value = "";
+    if (!arq) return;
+    const url = URL.createObjectURL(arq);
+    if (arq.type.startsWith("image/")) return revisar({ tipo: "foto", src: url });
+    if (!arq.type.startsWith("video/")) return;
+    const v = document.createElement("video"); v.preload = "metadata"; v.muted = true; v.src = url;
+    v.onloadedmetadata = () => {
+      if (v.duration > VIDEO_MAX_S + .5) return avisar(`Esse vídeo tem ${Math.round(v.duration)} s. Escolha um de até ${VIDEO_MAX_S} segundos.`, true);
+      revisar({ tipo: "video", src: url, w: v.videoWidth, h: v.videoHeight });
+    };
+  });
+
+  /* Revisão: Refazer ou Enviar */
+  function revisar(m) {
+    capturado = m;
+    revMidia.innerHTML = m.tipo === "video"
+      ? `<video muted loop playsinline autoplay>${fontes(m)}</video>`
+      : `<img src="${m.src}" alt="Sua foto">`;
+    $("rev-legenda").innerHTML = `Vai para a galeria como ${m.tipo === "video" ? "vídeo" : "foto"} de <b>${esc(meuNome || "você")}</b>`;
+    revisao.hidden = false; $("publicar").focus();
+  }
+  $("refazer").onclick = () => { revisao.hidden = true; revMidia.innerHTML = ""; capturado = null; obt.focus(); };
+  $("publicar").onclick = () => {
+    if (!capturado) return;
+    const el = revMidia.firstElementChild;
+    const w = capturado.w || el.naturalWidth || el.videoWidth || 600, h = capturado.h || el.naturalHeight || el.videoHeight || 600;
+    midias.unshift({ ...capturado, w, h, autor: meuNome || "Você", nova: true });
+    const eraVideo = capturado.tipo === "video"; capturado = null; revMidia.innerHTML = "";
+    fecharCamera(); montarParede(); scrollTo({ top: 0, behavior: reduz ? "auto" : "smooth" });
+    avisar(eraVideo ? "Seu vídeo está na galeria" : "Sua foto está na galeria");
+  };
+
+  /* "Como usar" */
+  $("nav-ajuda").onclick = () => abrirFolha($("folha-ajuda"), $("ajuda-ok"));
+  $("ajuda-ok").onclick = fecharFolha;
+  $("nav-galeria").onclick = () => { scrollTo({ top: 0, behavior: reduz ? "auto" : "smooth" }); };
+
+  addEventListener("keydown", e => {
+    if (!lb.hidden) { if (e.key === "Escape") fechar(); else if (e.key === "ArrowRight") abrir(atual + 1); else if (e.key === "ArrowLeft") abrir(atual - 1); }
+    else if (!cam.hidden && e.key === "Escape") { if (!revisao.hidden) $("refazer").click(); else fecharCamera(); }
+    else if (e.key === "Escape") fecharFolha();
+  });
+
+  /* ---------- Início ---------- */
+  medirBrilhos(); requestAnimationFrame(quadroBrilhos);
+  let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => {
+    medirBrilhos(); if (reduz) quadroBrilhos(0);
+    if (lanternasLigadas) { medirLanternas(); if (reduz) quadroLanternas(0); } }, 150); });
+
+  /* ---------- Abertura: tocar em qualquer lugar acende uma lanterna ---------- */
+  const abertura = $("abertura"), ehPC = () => matchMedia("(min-width: 900px)").matches;
+  medirLanternas(); requestAnimationFrame(quadroLanternas);
+  function entrar(e) {
+    if (abertura.classList.contains("saindo")) return;
+    const r = abertura.getBoundingClientRect();
+    const x = e && e.clientX ? e.clientX - r.left : LW / 2, y = e && e.clientY ? e.clientY - r.top : LH * .7;
+    if (!reduz) {
+      // a lanterna da pessoa: maior, sai do ponto tocado e sobe rápido
+      lanternas.push({ x, y, s: 2.4, v: 3.2, f: 0, a: 1, minha: true });
+      acelera = 6;
+      const c = $("cortina"); c.style.setProperty("--x", (e && e.clientX || innerWidth / 2) + "px");
+      c.style.setProperty("--y", (e && e.clientY || innerHeight * .7) + "px"); c.classList.add("on");
+      setTimeout(() => c.classList.remove("on"), 1600);
+    }
+    abertura.classList.add("saindo");
+    setTimeout(() => {
+      lanternasLigadas = false;
+      if (meuNome || ehPC()) abrirApp();
+      else { abertura.hidden = true; $("boas").hidden = false; scrollTo(0, 0); }
+    }, reduz ? 350 : 1050);
+  }
+  abertura.addEventListener("click", entrar);
+  // O botão também responde ao teclado (Enter/Espaço chegam como click)
+})();
+</script>
+</body>
+</html>
