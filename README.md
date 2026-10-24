@@ -33,6 +33,6 @@ assets/bumerangue.*   bumerangue de exemplo (mp4 + webm) e capa
 
 ## Próximos passos
 
-- Backend de envio (storage + registro de quem enviou), seguindo o `PADRAO-QUALIDADE-SITES.md` do estúdio.
-- Gerar o bumerangue (vai e volta) no servidor com ffmpeg e a capa do vídeo.
+- Implementar o backend no front para testar as conexões.
+- Testar mandando e lendo as midias com os end points (POST: http://localhost:3000/photos, GET: http://localhost:3000/photos).
 - Data e local da festa; QR code das mesas.
