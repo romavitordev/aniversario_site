@@ -35,4 +35,5 @@ assets/bumerangue.*   bumerangue de exemplo (mp4 + webm) e capa
 
 - Implementar o backend no front para testar as conexões.
 - Testar mandando e lendo as midias com os end points (POST: http://localhost:3000/photos, GET: http://localhost:3000/photos).
+- Limitar por IP os dispositivos a poder adicionar 2 midias no maximo.
 - Data e local da festa; QR code das mesas.
