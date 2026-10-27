@@ -8,7 +8,7 @@ Os convidados entram com o nome, fotografam ou gravam bumerangues de até 6 s pe
 
 ## Telas
 
-1. **Abertura**: lanternas subindo, sol da Rapunzel e o nome. Tocar em qualquer lugar acende uma lanterna e leva para a próxima tela.
+1. **Abertura**: lanternas subindo, sol da Rapunzel e o nome. Tocar em qualquer lugar acende uma lanterna, toca os sinos e leva para a próxima tela.
 2. **Boas-vindas**: como funciona em três passos e o campo do nome (salvo no aparelho, sem senha).
 3. **Galeria**: fotos e bumerangues em colunas. Vídeo fica parado na capa e só toca ao abrir. Barra inferior com o **+**.
 4. **Câmera**: abas Foto e Vídeo; no vídeo, segurar o botão enche o anel até 6 s e para sozinho. Revisão com Refazer ou Enviar.

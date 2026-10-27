@@ -824,8 +824,11 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   /* ---------- Abertura: tocar em qualquer lugar acende uma lanterna ---------- */
   const abertura = $("abertura"), ehPC = () => matchMedia("(min-width: 900px)").matches;
   medirLanternas(); requestAnimationFrame(quadroLanternas);
+  // sinos tocam junto com a lanterna (o toque libera o áudio no celular)
+  const sinos = new Audio("assets/sinos.mp3"); sinos.preload = "auto"; sinos.volume = .7;
   function entrar(e) {
     if (abertura.classList.contains("saindo")) return;
+    sinos.play().catch(() => {});
     const r = abertura.getBoundingClientRect();
     const x = e && e.clientX ? e.clientX - r.left : LW / 2, y = e && e.clientY ? e.clientY - r.top : LH * .7;
     if (!reduz) {
