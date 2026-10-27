@@ -7,6 +7,18 @@
 <meta name="theme-color" content="#120724">
 <meta name="description" content="Festa de XV anos da Ana Luísa: galeria de fotos e vídeos dos convidados.">
 <title>XV Ana Luísa</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<!-- Prévia do link no WhatsApp. O WhatsApp só lê og:image com endereço completo:
+     quando o domínio estiver definido, troque "assets/og.jpg" por "https://<domínio>/assets/og.jpg". -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="XV Ana Luísa · Momentos inesquecíveis">
+<meta property="og:description" content="Fotos e vídeos da festa, registrados por quem estava lá.">
+<meta property="og:image" content="assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap">
@@ -21,7 +33,7 @@ img { max-width: 100%; }
 <style>
 /* Layout: duas telas. 1) Boas-vindas: abertura com lanternas, três passos em
    linha (ícone fino + legenda curta, sem caixa), campo de nome e Prosseguir.
-   2) App: galeria em exposição com fotos e bumerangues de até 6 s, barra
+   2) App: galeria em exposição com fotos e bumerangues de até 5 s, barra
    inferior com o "+" (foto ou vídeo). Brilhos piscando em tudo.
    No computador não há "+" nem nome: é só para ver. */
 :root {
@@ -155,7 +167,7 @@ button, input { font: inherit; }
   width: 100%; padding: 15px 18px; border-radius: 14px; font-size: 1rem; color: var(--perola);
   background: rgba(15, 6, 32, .7); border: 1px solid var(--linha); outline: none;
 }
-.entrar input::placeholder { color: rgba(201,174,240,.55); }
+.entrar input::placeholder { color: rgba(201,174,240,.72); } /* 5,6:1 sobre o campo (AA pede 4,5:1) */
 .entrar input:focus { border-color: var(--ouro-claro); }
 .erro { color: #ffc7c7; font-size: .85rem; text-align: left; margin: 0; }
 .btn {
@@ -184,6 +196,15 @@ button, input { font: inherit; }
 .ola b { color: var(--perola); font-weight: 400; }
 
 .exposicao { max-width: 1240px; margin: 0 auto; padding: 28px var(--gr) 0 var(--gl); }
+.cabeca-galeria { display: grid; justify-items: center; gap: 4px; text-align: center; margin-bottom: 22px; }
+.cabeca-galeria .rotulo { margin: 0; }
+.titulo-galeria {
+  margin: 0; font-family: var(--f-serif); font-style: italic; font-weight: 400;
+  font-size: clamp(1.6rem, 6.5vw, 2.4rem); line-height: 1.15; color: var(--perola);
+  display: flex; align-items: center; gap: 14px;
+}
+.titulo-galeria::before, .titulo-galeria::after { content: ""; width: 28px; height: 1px; flex: none; background: linear-gradient(90deg, transparent, var(--ouro)); }
+.titulo-galeria::after { transform: scaleX(-1); }
 .parede { column-count: 2; column-gap: 8px; }
 .foto { break-inside: avoid; margin: 0 0 8px; padding: 0; border: 0; display: block; width: 100%; cursor: zoom-in; border-radius: 4px; overflow: hidden; background: var(--violeta); position: relative; }
 .foto img, .foto video { display: block; width: 100%; height: auto; transition: opacity .3s ease; }
@@ -322,8 +343,8 @@ button, input { font: inherit; }
 .lb-topo, .lb-base { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 6px; }
 .lb-palco { display: grid; place-items: center; min-height: 0; }
 .lb-palco img, .lb-palco video { max-width: 100%; max-height: calc(100svh - 150px); object-fit: contain; border-radius: 4px; }
-.lightbox button { color: var(--lilas); background: none; border: 0; padding: 10px 8px; cursor: pointer; font-size: .9rem; }
-.lb-nav button { font-size: 1.35rem; }
+.lightbox button { color: var(--lilas); background: none; border: 0; padding: 10px 8px; min-height: 44px; cursor: pointer; font-size: .9rem; }
+.lb-nav button { font-size: 1.35rem; min-width: 44px; min-height: 44px; }
 .lb-autor { margin: 0; font-family: var(--f-nome); font-size: 2rem; line-height: 1.1; color: var(--ouro-claro); min-width: 0; }
 .lb-autor::before { content: "por "; font-family: var(--f-serif); font-style: italic; font-size: 1rem; color: var(--lilas); }
 .lb-nav { display: flex; gap: 6px; flex: none; }
@@ -378,7 +399,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     </g>
   </svg>
   <div class="conteudo">
-    <p class="rotulo">Você está convidado para</p>
+    <p class="rotulo">Momentos inesquecíveis…</p>
     <p class="xv">XV ANOS</p>
     <h1 class="nome" id="t-abertura">Ana Luísa</h1>
     <p class="frase">Uma noite de lanternas, e cada foto sua guarda um pedaço dela.</p>
@@ -400,7 +421,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
       <li><span class="icone cheio"><svg aria-hidden="true"><use href="#i-mais"/></svg></span>
         <span><b>Toque no +</b><small>na barra de baixo</small></span></li>
       <li><span class="icone"><svg aria-hidden="true"><use href="#i-camera"/></svg></span>
-        <span><b>Foto ou vídeo</b><small>vídeos de até 6 s</small></span></li>
+        <span><b>Foto ou vídeo</b><small>vídeos de até 5 s</small></span></li>
       <li><span class="icone"><svg aria-hidden="true"><use href="#i-galeria"/></svg></span>
         <span><b>Vai pra galeria</b><small>assinado por você</small></span></li>
     </ol>
@@ -422,7 +443,12 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <span class="ola so-celular" id="ola"></span>
   </header>
 
-  <main class="exposicao" aria-label="Galeria de fotos e vídeos da festa">
+  <main class="exposicao" aria-labelledby="t-galeria">
+    <!-- só uma tela aparece por vez, então este é o único h1 visível depois de entrar -->
+    <div class="cabeca-galeria">
+      <p class="rotulo">Galeria da festa</p>
+      <h1 class="titulo-galeria" id="t-galeria">Momentos inesquecíveis</h1>
+    </div>
     <div class="parede" id="parede"></div>
     <p class="aviso">Prévia com fotos, vídeo e nomes de exemplo, feitos a partir da referência de decoração.</p>
   </main>
@@ -491,7 +517,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <li><span class="icone cheio"><svg aria-hidden="true"><use href="#i-mais"/></svg></span>
       <span><b>Toque no +</b><small>na barra de baixo</small></span></li>
     <li><span class="icone"><svg aria-hidden="true"><use href="#i-camera"/></svg></span>
-      <span><b>Foto ou vídeo</b><small>vídeos de até 6 s</small></span></li>
+      <span><b>Foto ou vídeo</b><small>vídeos de até 5 s</small></span></li>
     <li><span class="icone"><svg aria-hidden="true"><use href="#i-galeria"/></svg></span>
       <span><b>Vai pra galeria</b><small>assinado por você</small></span></li>
   </ol>
@@ -514,7 +540,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   const dprMax = () => Math.min(devicePixelRatio || 1, 2);
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const VIDEO_MAX_S = 6;
+  const VIDEO_MAX_S = 5; // o backend recusa vídeo com mais de 5 s
 
   /* ---------- Nome salvo no aparelho (sem senha, sem sair) ---------- */
   const CHAVE = "xv-ana-luisa:nome";
@@ -547,13 +573,20 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
       bx.quadraticCurveTo(x, y, x - r * 2, y); bx.quadraticCurveTo(x, y, x, y - r * 2); bx.fill();
     } else { bx.fillStyle = `rgba(${c},${a})`; bx.beginPath(); bx.arc(x, y, r, 0, 7); bx.fill(); }
   }
+  let rafBrilhos = 0;
   function quadroBrilhos(t) {
     bx.clearRect(0, 0, BW, BH);
     for (const b of brilhos) {
       const a = reduz ? .55 : Math.pow(.5 + .5 * Math.sin(t / b.p * Math.PI * 2 + b.f), 3);
       if (a > .02) estrela(b.x, b.y, b.r, a * .9, b.c);
     }
-    if (!reduz) requestAnimationFrame(quadroBrilhos);
+    if (!reduz) rafBrilhos = requestAnimationFrame(quadroBrilhos);
+  }
+  // Câmera e foto ampliada cobrem a tela toda: animar por trás só gasta bateria na festa
+  function pausarBrilhos(pausa) {
+    if (reduz) return;
+    cancelAnimationFrame(rafBrilhos);
+    if (!pausa) rafBrilhos = requestAnimationFrame(quadroBrilhos);
   }
 
   /* ---------- Lanternas (boas-vindas) ---------- */
@@ -653,9 +686,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
       : `<img src="${m.src}" alt="Foto de ${esc(m.autor)}">`;
     $("lb-autor").textContent = m.autor;
     $("lb-contador").textContent = `${atual + 1} / ${midias.length}`;
-    if (lb.hidden) { voltar = document.activeElement; lb.hidden = false; document.body.style.overflow = "hidden"; $("lb-fechar").focus(); }
+    if (lb.hidden) { voltar = document.activeElement; lb.hidden = false; document.body.style.overflow = "hidden"; pausarBrilhos(true); $("lb-fechar").focus(); }
   }
-  function fechar() { lb.hidden = true; palco.innerHTML = ""; document.body.style.overflow = ""; voltar?.focus(); }
+  function fechar() { lb.hidden = true; palco.innerHTML = ""; document.body.style.overflow = ""; pausarBrilhos(false); voltar?.focus(); }
   parede.addEventListener("click", e => { const f = e.target.closest(".foto"); if (f) abrir(+f.dataset.i); });
   $("lb-fechar").onclick = fechar;
   $("lb-ant").onclick = () => abrir(atual - 1);
@@ -696,10 +729,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   }
   function pararFluxo() { fluxo?.getTracks().forEach(tr => tr.stop()); fluxo = null; }
   function abrirCamera() {
-    cam.hidden = false; revisao.hidden = true; document.body.style.overflow = "hidden";
+    cam.hidden = false; revisao.hidden = true; document.body.style.overflow = "hidden"; pausarBrilhos(true);
     definirModo(modo); ligarCamera(); obt.focus();
   }
-  function fecharCamera() { pararGravacao(true); pararFluxo(); cam.hidden = true; document.body.style.overflow = ""; $("mais").focus(); }
+  function fecharCamera() { pararGravacao(true); pararFluxo(); cam.hidden = true; document.body.style.overflow = ""; pausarBrilhos(false); $("mais").focus(); }
   $("mais").onclick = abrirCamera;
   $("cam-fechar").onclick = fecharCamera;
   $("cam-virar").onclick = () => { frente = !frente; if (fluxo) ligarCamera(); };
@@ -707,7 +740,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   function definirModo(m) {
     modo = m; cam.dataset.modo = m;
     cam.querySelectorAll(".cam-modos button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.modo === m)));
-    dica.textContent = m === "foto" ? "Toque para fotografar" : "Segure para gravar · até 6 s";
+    dica.textContent = m === "foto" ? "Toque para fotografar" : `Segure para gravar · até ${VIDEO_MAX_S} s`;
     obt.setAttribute("aria-label", m === "foto" ? "Tirar foto" : "Segure para gravar vídeo");
   }
   cam.querySelector(".cam-modos").addEventListener("click", e => { const b = e.target.closest("button"); if (b && !gravando) definirModo(b.dataset.modo); });
@@ -723,13 +756,15 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     const f = $("cam-flash"); f.classList.remove("on"); void f.offsetWidth; f.classList.add("on");
     let src = simulada.src, w = 900, h = 1195;
     if (fluxo && aoVivo.videoWidth) {
-      const c = document.createElement("canvas"); c.width = aoVivo.videoWidth; c.height = aoVivo.videoHeight;
-      c.getContext("2d").drawImage(aoVivo, 0, 0); src = c.toDataURL("image/jpeg", .88); w = c.width; h = c.height;
+      // lado máximo de 1920 px: foto de câmera 4K pesa demais para subir na rede da festa
+      const k = Math.min(1, 1920 / Math.max(aoVivo.videoWidth, aoVivo.videoHeight));
+      const c = document.createElement("canvas"); c.width = Math.round(aoVivo.videoWidth * k); c.height = Math.round(aoVivo.videoHeight * k);
+      c.getContext("2d").drawImage(aoVivo, 0, 0, c.width, c.height); src = c.toDataURL("image/jpeg", .85); w = c.width; h = c.height;
     }
     setTimeout(() => revisar({ tipo: "foto", src, w, h }), 280);
   }
 
-  /* Vídeo: segurar; o anel enche até 6 s e para sozinho */
+  /* Vídeo: segurar; o anel enche até 5 s e para sozinho */
   function iniciarGravacao() {
     if (gravando) return;
     gravando = true; t0 = performance.now(); cam.classList.add("gravando"); tempo.hidden = false; pedacos = [];
@@ -779,7 +814,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     if (!arq.type.startsWith("video/")) return;
     const v = document.createElement("video"); v.preload = "metadata"; v.muted = true; v.src = url;
     v.onloadedmetadata = () => {
-      if (v.duration > VIDEO_MAX_S + .5) return avisar(`Esse vídeo tem ${Math.round(v.duration)} s. Escolha um de até ${VIDEO_MAX_S} segundos.`, true);
+      // folga pequena: o servidor recusa acima de 5 s
+      if (v.duration > VIDEO_MAX_S + .15) return avisar(`Esse vídeo tem ${v.duration.toFixed(1).replace(".", ",")} s. Escolha um de até ${VIDEO_MAX_S} segundos.`, true);
       revisar({ tipo: "video", src: url, w: v.videoWidth, h: v.videoHeight });
     };
   });
@@ -816,7 +852,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   });
 
   /* ---------- Início ---------- */
-  medirBrilhos(); requestAnimationFrame(quadroBrilhos);
+  medirBrilhos(); rafBrilhos = requestAnimationFrame(quadroBrilhos);
   let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => {
     medirBrilhos(); if (reduz) quadroBrilhos(0);
     if (lanternasLigadas) { medirLanternas(); if (reduz) quadroLanternas(0); } }, 150); });
@@ -824,8 +860,11 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   /* ---------- Abertura: tocar em qualquer lugar acende uma lanterna ---------- */
   const abertura = $("abertura"), ehPC = () => matchMedia("(min-width: 900px)").matches;
   medirLanternas(); requestAnimationFrame(quadroLanternas);
+  // sinos tocam junto com a lanterna (o toque libera o áudio no celular)
+  const sinos = new Audio("assets/sinos.mp3"); sinos.preload = "auto"; sinos.volume = .7;
   function entrar(e) {
     if (abertura.classList.contains("saindo")) return;
+    sinos.play().catch(() => {});
     const r = abertura.getBoundingClientRect();
     const x = e && e.clientX ? e.clientX - r.left : LW / 2, y = e && e.clientY ? e.clientY - r.top : LH * .7;
     if (!reduz) {

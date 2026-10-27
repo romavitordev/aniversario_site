@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="brilho" cx=".5" cy=".55" r=".5"><stop offset="0" stop-color="#ffbe50" stop-opacity=".55"/><stop offset="1" stop-color="#ffbe50" stop-opacity="0"/></radialGradient>
+    <linearGradient id="papel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1c2"/><stop offset="1" stop-color="#ec9a32"/></linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#1a0b30"/>
+  <circle cx="32" cy="34" r="26" fill="url(#brilho)"/>
+  <path d="M23 18h18l4 30H19z" fill="url(#papel)"/>
+  <path d="M21 48h22" stroke="#c9822c" stroke-width="2" stroke-linecap="round"/>
+</svg>
