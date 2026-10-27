@@ -2,7 +2,7 @@
 
 Protótipo de front do site da festa de 15 anos da Ana Luísa (tema Enrolados: noite de lanternas).
 
-Os convidados entram com o nome, fotografam ou gravam bumerangues de até 6 s pela câmera do próprio site, e tudo aparece numa galeria em exposição com o nome de quem registrou. No computador o site serve só para ver as fotos depois da festa.
+Os convidados entram com o nome, fotografam ou gravam bumerangues de até 5 s pela câmera do próprio site, e tudo aparece numa galeria em exposição com o nome de quem registrou. No computador o site serve só para ver as fotos depois da festa.
 
 > **Status:** só front. Não há backend: o envio fica no próprio aparelho, as fotos desfocadas e os nomes da galeria são exemplos.
 
@@ -11,7 +11,7 @@ Os convidados entram com o nome, fotografam ou gravam bumerangues de até 6 s pe
 1. **Abertura**: lanternas subindo, sol da Rapunzel e o nome. Tocar em qualquer lugar acende uma lanterna, toca os sinos e leva para a próxima tela.
 2. **Boas-vindas**: como funciona em três passos e o campo do nome (salvo no aparelho, sem senha).
 3. **Galeria**: fotos e bumerangues em colunas. Vídeo fica parado na capa e só toca ao abrir. Barra inferior com o **+**.
-4. **Câmera**: abas Foto e Vídeo; no vídeo, segurar o botão enche o anel até 6 s e para sozinho. Revisão com Refazer ou Enviar.
+4. **Câmera**: abas Foto e Vídeo; no vídeo, segurar o botão enche o anel até 5 s e para sozinho (o backend recusa vídeo com mais de 5 s). Revisão com Refazer ou Enviar.
 
 ## Rodar
 
@@ -29,10 +29,21 @@ A câmera real (`getUserMedia`) só funciona em **HTTPS** ou em `localhost`. Par
 index.html            todas as telas, estilos e scripts
 assets/decoracao.jpg  referência de decoração (visor simulado e galeria)
 assets/bumerangue.*   bumerangue de exemplo (mp4 + webm) e capa
+assets/sinos.mp3      sinos da abertura
+assets/og.jpg         prévia do link no WhatsApp (1200x630)
+assets/favicon.svg    ícone da aba (+ apple-touch-icon.png)
+qr.html               plaquinhas com QR code para as mesas (4 por A4)
+404.html              página de erro no tema da festa
 ```
+
+## QR code das mesas
+
+Abra `qr.html` no site publicado (o QR já aponta para ele) ou use `qr.html?url=https://...`. Confira com a câmera do celular e imprima: sai uma folha A4 com 4 plaquinhas para recortar.
 
 ## Próximos passos
 
 - Backend de envio (storage + registro de quem enviou), seguindo o `PADRAO-QUALIDADE-SITES.md` do estúdio.
 - Gerar o bumerangue (vai e volta) no servidor com ffmpeg e a capa do vídeo.
-- Data e local da festa; QR code das mesas.
+- Ligar a galeria e a câmera às rotas `/photos` do backend (cabeçalho `X-Username`).
+- Quando o domínio estiver definido, trocar `og:image` no `index.html` pelo endereço completo (o WhatsApp não lê caminho relativo).
+- Data e local da festa (pendente: a cliente precisa enviar).

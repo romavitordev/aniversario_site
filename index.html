@@ -7,6 +7,18 @@
 <meta name="theme-color" content="#120724">
 <meta name="description" content="Festa de XV anos da Ana Luísa: galeria de fotos e vídeos dos convidados.">
 <title>XV Ana Luísa</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<!-- Prévia do link no WhatsApp. O WhatsApp só lê og:image com endereço completo:
+     quando o domínio estiver definido, troque "assets/og.jpg" por "https://<domínio>/assets/og.jpg". -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="XV Ana Luísa · Momentos inesquecíveis">
+<meta property="og:description" content="Fotos e vídeos da festa, registrados por quem estava lá.">
+<meta property="og:image" content="assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap">
@@ -21,7 +33,7 @@ img { max-width: 100%; }
 <style>
 /* Layout: duas telas. 1) Boas-vindas: abertura com lanternas, três passos em
    linha (ícone fino + legenda curta, sem caixa), campo de nome e Prosseguir.
-   2) App: galeria em exposição com fotos e bumerangues de até 6 s, barra
+   2) App: galeria em exposição com fotos e bumerangues de até 5 s, barra
    inferior com o "+" (foto ou vídeo). Brilhos piscando em tudo.
    No computador não há "+" nem nome: é só para ver. */
 :root {
@@ -323,7 +335,7 @@ button, input { font: inherit; }
 .lb-palco { display: grid; place-items: center; min-height: 0; }
 .lb-palco img, .lb-palco video { max-width: 100%; max-height: calc(100svh - 150px); object-fit: contain; border-radius: 4px; }
 .lightbox button { color: var(--lilas); background: none; border: 0; padding: 10px 8px; cursor: pointer; font-size: .9rem; }
-.lb-nav button { font-size: 1.35rem; }
+.lb-nav button { font-size: 1.35rem; min-width: 44px; min-height: 44px; }
 .lb-autor { margin: 0; font-family: var(--f-nome); font-size: 2rem; line-height: 1.1; color: var(--ouro-claro); min-width: 0; }
 .lb-autor::before { content: "por "; font-family: var(--f-serif); font-style: italic; font-size: 1rem; color: var(--lilas); }
 .lb-nav { display: flex; gap: 6px; flex: none; }
@@ -400,7 +412,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
       <li><span class="icone cheio"><svg aria-hidden="true"><use href="#i-mais"/></svg></span>
         <span><b>Toque no +</b><small>na barra de baixo</small></span></li>
       <li><span class="icone"><svg aria-hidden="true"><use href="#i-camera"/></svg></span>
-        <span><b>Foto ou vídeo</b><small>vídeos de até 6 s</small></span></li>
+        <span><b>Foto ou vídeo</b><small>vídeos de até 5 s</small></span></li>
       <li><span class="icone"><svg aria-hidden="true"><use href="#i-galeria"/></svg></span>
         <span><b>Vai pra galeria</b><small>assinado por você</small></span></li>
     </ol>
@@ -491,7 +503,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <li><span class="icone cheio"><svg aria-hidden="true"><use href="#i-mais"/></svg></span>
       <span><b>Toque no +</b><small>na barra de baixo</small></span></li>
     <li><span class="icone"><svg aria-hidden="true"><use href="#i-camera"/></svg></span>
-      <span><b>Foto ou vídeo</b><small>vídeos de até 6 s</small></span></li>
+      <span><b>Foto ou vídeo</b><small>vídeos de até 5 s</small></span></li>
     <li><span class="icone"><svg aria-hidden="true"><use href="#i-galeria"/></svg></span>
       <span><b>Vai pra galeria</b><small>assinado por você</small></span></li>
   </ol>
@@ -514,7 +526,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   const dprMax = () => Math.min(devicePixelRatio || 1, 2);
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const VIDEO_MAX_S = 6;
+  const VIDEO_MAX_S = 5; // o backend recusa vídeo com mais de 5 s
 
   /* ---------- Nome salvo no aparelho (sem senha, sem sair) ---------- */
   const CHAVE = "xv-ana-luisa:nome";
@@ -707,7 +719,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   function definirModo(m) {
     modo = m; cam.dataset.modo = m;
     cam.querySelectorAll(".cam-modos button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.modo === m)));
-    dica.textContent = m === "foto" ? "Toque para fotografar" : "Segure para gravar · até 6 s";
+    dica.textContent = m === "foto" ? "Toque para fotografar" : `Segure para gravar · até ${VIDEO_MAX_S} s`;
     obt.setAttribute("aria-label", m === "foto" ? "Tirar foto" : "Segure para gravar vídeo");
   }
   cam.querySelector(".cam-modos").addEventListener("click", e => { const b = e.target.closest("button"); if (b && !gravando) definirModo(b.dataset.modo); });
@@ -723,13 +735,15 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     const f = $("cam-flash"); f.classList.remove("on"); void f.offsetWidth; f.classList.add("on");
     let src = simulada.src, w = 900, h = 1195;
     if (fluxo && aoVivo.videoWidth) {
-      const c = document.createElement("canvas"); c.width = aoVivo.videoWidth; c.height = aoVivo.videoHeight;
-      c.getContext("2d").drawImage(aoVivo, 0, 0); src = c.toDataURL("image/jpeg", .88); w = c.width; h = c.height;
+      // lado máximo de 1920 px: foto de câmera 4K pesa demais para subir na rede da festa
+      const k = Math.min(1, 1920 / Math.max(aoVivo.videoWidth, aoVivo.videoHeight));
+      const c = document.createElement("canvas"); c.width = Math.round(aoVivo.videoWidth * k); c.height = Math.round(aoVivo.videoHeight * k);
+      c.getContext("2d").drawImage(aoVivo, 0, 0, c.width, c.height); src = c.toDataURL("image/jpeg", .85); w = c.width; h = c.height;
     }
     setTimeout(() => revisar({ tipo: "foto", src, w, h }), 280);
   }
 
-  /* Vídeo: segurar; o anel enche até 6 s e para sozinho */
+  /* Vídeo: segurar; o anel enche até 5 s e para sozinho */
   function iniciarGravacao() {
     if (gravando) return;
     gravando = true; t0 = performance.now(); cam.classList.add("gravando"); tempo.hidden = false; pedacos = [];
@@ -779,7 +793,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     if (!arq.type.startsWith("video/")) return;
     const v = document.createElement("video"); v.preload = "metadata"; v.muted = true; v.src = url;
     v.onloadedmetadata = () => {
-      if (v.duration > VIDEO_MAX_S + .5) return avisar(`Esse vídeo tem ${Math.round(v.duration)} s. Escolha um de até ${VIDEO_MAX_S} segundos.`, true);
+      // folga pequena: o servidor recusa acima de 5 s
+      if (v.duration > VIDEO_MAX_S + .15) return avisar(`Esse vídeo tem ${v.duration.toFixed(1).replace(".", ",")} s. Escolha um de até ${VIDEO_MAX_S} segundos.`, true);
       revisar({ tipo: "video", src: url, w: v.videoWidth, h: v.videoHeight });
     };
   });

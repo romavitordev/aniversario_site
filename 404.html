@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#120724">
+<title>Página não encontrada · XV Ana Luísa</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital@1&family=Jost:wght@300;500&display=swap">
+<style>
+  /* Mesma noite da abertura; caminhos com "/" porque o GitHub Pages serve este arquivo em qualquer URL */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100svh; display: grid; place-items: center; text-align: center;
+    padding: 40px 16px; color: #fbf6ee; font: 300 16px/1.6 "Jost", system-ui, sans-serif;
+    background: radial-gradient(ellipse 70% 50% at 50% 42%, rgba(227,179,61,.14), transparent 70%),
+                linear-gradient(180deg, #120724, #1a0b30 45%, #1f0d39);
+  }
+  h1 { font: 400 clamp(3rem, 14vw, 5rem)/1.1 "Great Vibes", cursive; color: #f7dc8e; margin: 0 0 8px; }
+  p { font: italic 1.2rem/1.5 "Cormorant Garamond", Georgia, serif; color: #c9aef0; margin: 0 auto 32px; max-width: 28ch; }
+  a {
+    display: inline-block; padding: 16px 28px; border-radius: 999px; text-decoration: none;
+    font-weight: 500; color: #2a1404; background: linear-gradient(180deg, #f7dc8e, #e3b33d);
+  }
+  a:focus-visible { outline: 2px solid #f7dc8e; outline-offset: 3px; }
+</style>
+</head>
+<body>
+  <main>
+    <h1>Ops…</h1>
+    <p>Essa lanterna voou para longe. A festa continua na página principal.</p>
+    <a href="/" id="voltar">Voltar para a festa</a>
+  </main>
+  <script>
+    // No GitHub Pages de projeto o site fica em /<repo>/, não na raiz do domínio
+    if (location.hostname.endsWith("github.io")) {
+      const repo = location.pathname.split("/")[1];
+      if (repo) document.getElementById("voltar").href = `/${repo}/`;
+    }
+  </script>
+</body>
+</html>
