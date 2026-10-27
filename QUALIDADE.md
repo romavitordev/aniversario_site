@@ -1,6 +1,6 @@
 # Qualidade · XV Ana Luísa
 
-Análise do front contra o `PADRAO-QUALIDADE-SITES.md` do estúdio, em 27/10/2026, no branch `texto/momentos-inesqueciveis`.
+Análise do front contra o `PADRAO-QUALIDADE-SITES.md` do estúdio, em 27/10/2026 (ajustes de design aplicados no mesmo dia), no branch `texto/momentos-inesqueciveis`.
 Legenda: `[x]` feito · `[~]` parcial · `[ ]` pendente · `n/a` não se aplica (com o motivo).
 
 O backend é do Richard e ainda não está neste repositório: as seções 3 (Backend) e 6 ficam para quando ele chegar.
@@ -21,12 +21,12 @@ O que pesa na nota de performance:
 
 ## 1. Design e referências
 
-- [ ] Direção visual a partir de referências anotadas no README. O tema (Enrolados, noite de lanternas) está claro, mas o README não diz quais referências inspiraram.
+- [x] Direção visual a partir de referências anotadas no README (seção "Direção visual": Enrolados, cores e papel de cada fonte).
 - [x] Tokens definidos antes das telas (variáveis em `:root`: cores, fontes, margens).
-- [ ] **No máximo 2 famílias de fonte.** São 3: Great Vibes (nome), Cormorant Garamond (frases) e Jost (corpo). Dá para tirar a Cormorant e usar Jost em itálico nas frases, ou manter e aceitar a exceção (ela ajuda o clima de convite).
-- [~] Contraste AA. Quase tudo passa com folga (lilás 9,5:1, ouro 13,7:1, botão 9:1). **Falha:** o placeholder "Seu nome" fica em 3,7:1 (precisa de 4,5:1).
+- [~] No máximo 2 famílias de fonte. São 3 (Great Vibes, Cormorant Garamond e Jost), e ficaram como **exceção registrada no README**, com o papel de cada uma e qual sai primeiro se a performance apertar.
+- [x] Contraste AA. Lilás 9,5:1, ouro 13,7:1, botão 9:1 e o placeholder "Seu nome" subiu de 3,7:1 para 5,6:1.
 - [x] Animações respeitam `prefers-reduced-motion` (lanternas, brilhos, sol, saída da abertura).
-- [~] Efeitos pesados. Os dois canvas (brilhos e lanternas) não têm WebGL e o TBT é 0, mas **os brilhos continuam animando a tela inteira o tempo todo**, inclusive atrás da câmera e da foto ampliada. Numa festa de horas, isso gasta bateria do convidado sem ninguém ver.
+- [x] Efeitos pesados. Os canvas não têm WebGL, o TBT é 0, e os brilhos agora param enquanto a câmera ou a foto ampliada cobrem a tela.
 - [x] Efeito decorativo não atrapalha leitura nem botão.
 - n/a Modelos 3D: o site não tem.
 
@@ -35,7 +35,7 @@ O que pesa na nota de performance:
 ### Layout e responsividade
 - [~] Testado em 375 px (celular) e no desktop do navegador. Faltam 360, 768, 1280 e 1920 px.
 - [x] Sem rolagem horizontal (medido em 375 px).
-- [~] Áreas de toque de 44 px. Barra, "+", botões da câmera e setas da foto ampliada passam. O "Fechar ✕" da foto ampliada não foi medido.
+- [x] Áreas de toque de 44 px. Barra, "+", botões da câmera, setas e "Fechar ✕" da foto ampliada (este tinha 43 px e passou para 44).
 - n/a Tema claro/escuro: a noite escura é a identidade da festa.
 
 ### Conversão
@@ -50,7 +50,7 @@ O que pesa na nota de performance:
 - n/a Scripts de terceiros: não há analytics nem pixel.
 
 ### Acessibilidade
-- [~] HTML semântico. Tem `header`, `main`, `nav` e um `h1` na abertura. **Depois de entrar, a galeria não tem nenhum título visível** (o `h1` some junto com a abertura). Também não tem `footer`.
+- [~] HTML semântico. Tem `header`, `main`, `nav`, um `h1` na abertura e agora o título "Momentos inesquecíveis" (`h1`) na galeria; como só uma tela aparece por vez, há um `h1` visível de cada vez. Não tem `footer` (entra junto com o aviso de LGPD).
 - [~] Teclado e foco visível. O foco é visível e volta para o lugar certo ao fechar. **Falta prender o foco dentro dos diálogos** (câmera, foto ampliada, "Como usar"): com Tab, o foco sai para a galeria que está por trás.
 - [x] `alt` nas fotos ("Foto de Marina"); decorativas com `aria-hidden`.
 - [x] Label no campo de nome.
@@ -103,7 +103,7 @@ O que melhorar:
 1. **LGPD:** aviso nas boas-vindas e forma de tirar uma foto da galeria (depende de a cliente dizer quem responde).
 2. **Testar no iPhone e no Samsung** com o site publicado em HTTPS (câmera e gravação).
 3. **Performance:** carregar `decoracao.jpg` só depois de sair da abertura, reduzir as fontes e converter para WebP. Isso deve levar a nota para perto de 90.
-4. **Acessibilidade:** título na galeria, foco preso nos diálogos e contraste do placeholder.
-5. **Bateria:** pausar os brilhos quando a câmera ou a foto ampliada estiverem abertas.
+4. **Acessibilidade:** foco preso nos diálogos (título da galeria e contraste já foram feitos).
+5. ~~Bateria: pausar os brilhos atrás da câmera e da foto ampliada.~~ Feito.
 6. **Código:** separar CSS/JS, formatar, liberar os `objectURL` e adicionar SRI no `qr.html`.
 7. **Com o backend:** estados de envio, escapar URLs, tirar os exemplos e trocar o `og:image` pelo endereço completo.

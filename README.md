@@ -6,6 +6,13 @@ Os convidados entram com o nome, fotografam ou gravam bumerangues de até 5 s pe
 
 > **Status:** só front. Não há backend: o envio fica no próprio aparelho, as fotos desfocadas e os nomes da galeria são exemplos.
 
+## Direção visual
+
+- **Referência:** a cena das lanternas de *Enrolados* (Rapunzel): céu violeta à noite, lanternas douradas subindo e o sol da Rapunzel como marca d'água. Não usamos estilo do Refero, porque o tema veio da decoração da festa (`assets/decoracao.jpg`).
+- **Cores** (variáveis em `:root`): `--noite` e `--violeta` para o fundo e as superfícies, `--perola` para o texto, `--lilas` para textos de apoio e `--ouro`/`--ouro-claro` só para o nome, os detalhes e a ação principal.
+- **Fontes, cada uma com um papel:** Great Vibes só no nome "Ana Luísa", Cormorant Garamond (itálico) nas frases e títulos, e Jost no texto e nos botões. São 3 famílias, uma a mais que o padrão do estúdio. A exceção é consciente: a Great Vibes não serve para frases e a Jost não dá o tom de convite. Se a performance apertar, a primeira a sair é a Cormorant, trocada por Jost em itálico.
+- **Movimento:** lanternas, brilhos e o giro do sol param com `prefers-reduced-motion`. Os brilhos também param enquanto a câmera ou a foto ampliada cobrem a tela, para não gastar bateria.
+
 ## Telas
 
 1. **Abertura**: lanternas subindo, sol da Rapunzel e o nome. Tocar em qualquer lugar acende uma lanterna, toca os sinos e leva para a próxima tela.
