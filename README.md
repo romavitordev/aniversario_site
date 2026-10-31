@@ -49,8 +49,8 @@ Abra `qr.html` no site publicado (o QR já aponta para ele) ou use `qr.html?url=
 
 ## Próximos passos
 
-- Backend de envio (storage + registro de quem enviou), seguindo o `PADRAO-QUALIDADE-SITES.md` do estúdio.
-- Gerar o bumerangue (vai e volta) no servidor com ffmpeg e a capa do vídeo.
 - Ligar a galeria e a câmera às rotas `/photos` do backend (cabeçalho `X-Username`).
+- Limitar por IP os dispositivos a poder adicionar 2 mídias no máximo.
+- Gerar o bumerangue (vai e volta) no servidor com ffmpeg e a capa do vídeo.
 - Quando o domínio estiver definido, trocar `og:image` no `index.html` pelo endereço completo (o WhatsApp não lê caminho relativo).
 - Data e local da festa (pendente: a cliente precisa enviar).
