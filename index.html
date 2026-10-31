@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#120724">
+<!-- Endereço do backend (branch "backend"). Vazio = http://localhost:3000. Em produção, precisa ser HTTPS. -->
+<meta name="xv-api" content="">
 <meta name="description" content="Festa de XV anos da Ana Luísa: galeria de fotos e vídeos dos convidados.">
 <title>XV Ana Luísa</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -21,7 +23,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap">
+<!-- Fontes sem bloquear a primeira pintura: o texto aparece na fonte do sistema e troca quando a do Google chega -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap"></noscript>
 <style>
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 body { margin: 0; }
@@ -169,6 +173,8 @@ button, input { font: inherit; }
 }
 .entrar input::placeholder { color: rgba(201,174,240,.72); } /* 5,6:1 sobre o campo (AA pede 4,5:1) */
 .entrar input:focus { border-color: var(--ouro-claro); }
+/* LGPD: muitos convidados são menores de idade, então quem envia precisa saber quem vê */
+.nota-privacidade, .folha .nota-privacidade { margin: 4px 0 0; font-size: .76rem; line-height: 1.45; color: var(--lilas); text-align: center; }
 .erro { color: #ffc7c7; font-size: .85rem; text-align: left; margin: 0; }
 .btn {
   font-weight: 500; font-size: 1rem; letter-spacing: .03em; text-decoration: none; text-align: center;
@@ -178,6 +184,8 @@ button, input { font: inherit; }
 .btn-ouro { background: linear-gradient(180deg, var(--ouro-claro), var(--ouro)); color: #2a1404; box-shadow: 0 8px 28px rgba(227,179,61,.3); }
 .btn-ouro:active { transform: scale(.98); }
 .btn-sec { background: transparent; color: var(--perola); border-color: var(--linha); }
+.btn:disabled { opacity: .7; cursor: progress; }
+.lb-erro { margin: 0; color: var(--lilas); }
 .so-pc { display: none; }
 
 /* ================= Tela 2: app ================= */
@@ -215,7 +223,26 @@ button, input { font: inherit; }
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 .selo svg { width: 15px; height: 15px; }
-.aviso { margin: 18px 0 0; font-size: .78rem; color: var(--lilas); opacity: .75; text-align: center; }
+/* Enquanto a foto carrega o tamanho é desconhecido: um bloco com brilho segura o lugar */
+.foto.carregando { min-height: 180px; background: linear-gradient(110deg, var(--violeta) 30%, #3a1a66 50%, var(--violeta) 70%) 0 0 / 200% 100%; animation: reluz 1.4s linear infinite; }
+.foto.carregando img { opacity: 0; }
+@keyframes reluz { to { background-position: -200% 0; } }
+.foto.quebrada { min-height: 120px; display: grid; place-items: center; }
+.foto.quebrada img { display: none; }
+.foto.quebrada::after { content: "Foto indisponível"; font-size: .75rem; color: var(--lilas); }
+.capa-video {
+  aspect-ratio: 3 / 4; display: grid; place-content: center; justify-items: center; gap: 6px; padding: 12px; color: var(--ouro-claro);
+  background: radial-gradient(circle at 50% 40%, rgba(227,179,61,.3), transparent 62%), linear-gradient(160deg, #3b1466, #160828);
+}
+.capa-video svg { width: 34px; height: 34px; }
+.capa-video small { font-size: .66rem; letter-spacing: .22em; text-transform: uppercase; color: var(--lilas); }
+.capa-video b { font-family: var(--f-nome); font-weight: 400; font-size: 1.5rem; line-height: 1.1; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.estado { display: grid; justify-items: center; gap: 8px; text-align: center; padding: 40px 16px; color: var(--lilas); }
+.estado p { margin: 0; font-family: var(--f-serif); font-style: italic; font-size: 1.35rem; color: var(--perola); }
+.estado small { font-size: .88rem; max-width: 30ch; }
+.estado .btn { margin-top: 10px; }
+.spinner { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(247,220,142,.25); border-top-color: var(--ouro-claro); animation: girar .9s linear infinite; }
+.fim-lista { display: grid; place-items: center; padding: 20px 0 8px; }
 
 /* Barra inferior */
 .nav {
@@ -244,9 +271,7 @@ button, input { font: inherit; }
 /* ================= Câmera própria (estilo IG/TikTok) ================= */
 .camera { position: fixed; inset: 0; z-index: 55; background: #000; color: #fff; overflow: hidden; touch-action: none; }
 .cam-visor { position: absolute; inset: 0; }
-.cam-visor video, .cam-visor img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.cam-visor img { animation: mirar 14s ease-in-out infinite alternate; transform-origin: 55% 45%; }
-@keyframes mirar { from { transform: scale(1.12) translate(-1%, 1%); } to { transform: scale(1.2) translate(2%, -2%); } }
+.cam-visor video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .cam-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
 .cam-flash.on { animation: flash .45s ease-out; }
 @keyframes flash { 0% { opacity: .95; } 100% { opacity: 0; } }
@@ -279,6 +304,15 @@ button, input { font: inherit; }
   justify-self: start; width: 46px; height: 46px; border-radius: 12px; cursor: pointer; overflow: hidden;
   border: 2px solid rgba(255,255,255,.85); background: center / cover no-repeat; display: grid; place-items: center;
 }
+.cam-rolo svg { width: 22px; height: 22px; color: #fff; }
+.cam-sem {
+  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 10px; text-align: center;
+  padding: 0 max(32px, var(--gl)); background: radial-gradient(ellipse 70% 50% at 50% 40%, rgba(227,179,61,.12), transparent 70%), #0a0416;
+}
+.cam-sem svg { width: 40px; height: 40px; color: var(--ouro-claro); }
+.cam-sem p { margin: 0; font-family: var(--f-serif); font-style: italic; font-size: 1.4rem; }
+.cam-sem small { font-size: .88rem; color: var(--lilas); max-width: 32ch; }
+.obturador:disabled { opacity: .35; cursor: not-allowed; }
 .cam-rolo:focus-within { outline: 2px solid var(--ouro-claro); outline-offset: 3px; }
 .obturador {
   position: relative; width: 86px; height: 86px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
@@ -297,7 +331,6 @@ button, input { font: inherit; }
 .cam-dica { margin: 0; font-size: .8rem; color: rgba(255,255,255,.8); text-shadow: 0 1px 6px rgba(0,0,0,.5); }
 .cam-dica.balanca { animation: balanca .4s ease; color: var(--ouro-claro); }
 @keyframes balanca { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-.cam-aviso { position: absolute; top: calc(66px + env(safe-area-inset-top, 0px)); left: 50%; translate: -50% 0; font-size: .7rem; letter-spacing: .08em; color: rgba(255,255,255,.75); background: rgba(0,0,0,.35); padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
 
 /* Revisão depois de capturar */
 .cam-revisao { position: absolute; inset: 0; background: #0a0416; display: grid; grid-template-rows: minmax(0,1fr) auto; }
@@ -366,7 +399,8 @@ button, input { font: inherit; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 31; background: #120724; }
 
 @media (prefers-reduced-motion: reduce) {
-  .sol, .tela, .folha, .cam-visor img, .convite .chama, .convite span { animation: none; }
+  .sol, .tela, .folha, .convite .chama, .convite span, .foto.carregando { animation: none; }
+  .spinner { animation-duration: 2.5s; } /* continua girando devagar: parado não diz que está carregando */
   .abertura .conteudo { transition: opacity .4s ease; }
   .abertura.saindo .conteudo { transform: none; filter: none; }
   .btn, .mais, .foto img { transition: none; }
@@ -428,9 +462,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 
     <form class="entrar so-celular" id="form-nome" novalidate>
       <label for="seu-nome">Como você se chama?</label>
-      <input id="seu-nome" name="nome" type="text" autocomplete="given-name" maxlength="40" placeholder="Seu nome" enterkeyhint="go">
+      <input id="seu-nome" name="nome" type="text" autocomplete="given-name" maxlength="30" placeholder="Seu nome" enterkeyhint="go">
       <p class="erro" id="erro-nome" hidden>Digite seu nome para continuar.</p>
       <button class="btn btn-ouro" type="submit">Prosseguir</button>
+      <p class="nota-privacidade">Ao enviar, sua foto ou vídeo aparece na galeria da festa com o seu nome, para quem tiver o link do site. Quer tirar alguma? Fale com a família da Ana Luísa.</p>
     </form>
 
   </div>
@@ -450,7 +485,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
       <h1 class="titulo-galeria" id="t-galeria">Momentos inesquecíveis</h1>
     </div>
     <div class="parede" id="parede"></div>
-    <p class="aviso">Prévia com fotos, vídeo e nomes de exemplo, feitos a partir da referência de decoração.</p>
+    <div class="estado" id="estado" role="status" hidden></div>
+    <div class="fim-lista" id="fim-lista" hidden><span class="spinner" aria-hidden="true"></span></div>
   </main>
 
   <nav class="nav" aria-label="Navegação">
@@ -469,7 +505,11 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 <div class="camera" id="camera" data-modo="foto" role="dialog" aria-modal="true" aria-label="Câmera" hidden>
   <div class="cam-visor">
     <video id="cam-ao-vivo" playsinline muted autoplay hidden></video>
-    <img id="cam-simulada" src="assets/decoracao.jpg" alt="" hidden>
+    <div class="cam-sem" id="cam-sem" hidden>
+      <svg aria-hidden="true"><use href="#i-camera"/></svg>
+      <p>Não deu para abrir a câmera</p>
+      <small>Permita o acesso à câmera nas configurações do navegador, ou toque no quadradinho à esquerda para escolher uma foto ou vídeo do celular.</small>
+    </div>
     <div class="cam-flash" id="cam-flash"></div>
   </div>
   <div class="cam-topo">
@@ -477,7 +517,6 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <span class="cam-tempo" id="cam-tempo" hidden>0,0 s</span>
     <button class="cam-btn" type="button" id="cam-virar" aria-label="Virar câmera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9a8 8 0 0 1 14.3-3.3L20 8"/><path d="M20 4v4h-4"/><path d="M20 15a8 8 0 0 1-14.3 3.3L4 16"/><path d="M4 20v-4h4"/></svg></button>
   </div>
-  <span class="cam-aviso" id="cam-aviso" hidden>Prévia: câmera simulada</span>
   <div class="cam-base">
     <div class="cam-modos" role="tablist" aria-label="Modo">
       <button type="button" role="tab" aria-selected="true" data-modo="foto">Foto</button>
@@ -485,6 +524,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     </div>
     <div class="cam-controles">
       <label class="cam-rolo" id="cam-rolo" aria-label="Escolher da galeria do celular">
+        <svg aria-hidden="true"><use href="#i-galeria"/></svg>
         <input id="cam-arquivo" type="file" accept="image/*,video/*" class="sr">
       </label>
       <button type="button" class="obturador" id="obturador" aria-label="Tirar foto">
@@ -521,6 +561,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <li><span class="icone"><svg aria-hidden="true"><use href="#i-galeria"/></svg></span>
       <span><b>Vai pra galeria</b><small>assinado por você</small></span></li>
   </ol>
+  <p class="nota-privacidade">Suas fotos e vídeos aparecem na galeria com o seu nome, para quem tiver o link do site. Quer tirar alguma? Fale com a família da Ana Luísa.</p>
   <button type="button" class="btn btn-ouro" id="ajuda-ok">Entendi</button>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -546,7 +587,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   const CHAVE = "xv-ana-luisa:nome";
   const lerNome = () => { try { return localStorage.getItem(CHAVE) || ""; } catch { return ""; } };
   const salvarNome = n => { try { localStorage.setItem(CHAVE, n); } catch {} };
-  let meuNome = lerNome();
+  // Mesma regra do backend (middleware/username.ts) e só caracteres que cabem num cabeçalho HTTP
+  const nomeValido = n => /^[\p{L}\p{N}_ .-]{2,30}$/u.test(n) && /^[ -ÿ]+$/.test(n);
+  let meuNome = nomeValido(lerNome()) ? lerNome() : "";
 
   /* ---------- Brilhos: estrelinhas piscando devagar ---------- */
   const bc = $("brilhos"), bx = bc.getContext("2d");
@@ -618,78 +661,126 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     if (!reduz) requestAnimationFrame(quadroLanternas);
   }
 
-  /* ---------- Mídias de exemplo ---------- */
-  function fotoExemplo(w, h, seed, tons) {
-    const c = document.createElement("canvas"); c.width = w; c.height = h;
-    const x = c.getContext("2d"); let s = seed;
-    const r = () => (s = (s * 9301 + 49297) % 233280) / 233280;
-    const g = x.createLinearGradient(0, 0, w * r(), h);
-    g.addColorStop(0, tons[0]); g.addColorStop(1, tons[1]); x.fillStyle = g; x.fillRect(0, 0, w, h);
-    for (let i = 0; i < 26; i++) {
-      const R = 10 + r() * w * .16, cx = r() * w, cy = r() * h, cor = r() > .45 ? "255,205,110" : "214,180,255";
-      const b = x.createRadialGradient(cx, cy, 0, cx, cy, R);
-      b.addColorStop(0, `rgba(${cor},${.25 + r() * .45})`); b.addColorStop(1, `rgba(${cor},0)`);
-      x.fillStyle = b; x.beginPath(); x.arc(cx, cy, R, 0, 7); x.fill();
-    }
-    return c.toDataURL("image/jpeg", .82);
+  /* ---------- API (backend no branch "backend": rotas /photos) ---------- */
+  // Em produção o endereço vem da meta "xv-api"; vazia, usa o backend local da porta 3000
+  const API = (document.querySelector('meta[name="xv-api"]')?.content.trim() || "http://localhost:3000").replace(/\/+$/, "");
+  const POR_PAGINA = 24, MB = 1024 * 1024, VIDEO_MAX_MB = 30, FOTO_MAX_LADO = 1920;
+  const TIPOS_VIDEO = ["video/mp4", "video/webm", "video/quicktime"];
+  const EXT = { "image/jpeg": "jpg", "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov" };
+  const urlMidia = id => `${API}/photos/${encodeURIComponent(id)}`;
+  const daApi = p => ({ id: p.id, tipo: p.mimeType.startsWith("video/") ? "video" : "foto", src: urlMidia(p.id), autor: p.uploadedBy || "Convidado" });
+  async function buscar(token) {
+    const r = await fetch(`${API}/photos?pageSize=${POR_PAGINA}${token ? `&pageToken=${encodeURIComponent(token)}` : ""}`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
   }
-  // Bumerangue de exemplo (vai e volta, 6 s), também usado quando a câmera não está disponível
-  const DEMO_VIDEO = { src: "assets/bumerangue.mp4", webm: "assets/bumerangue.webm", capa: "assets/bumerangue-capa.jpg" };
-  const midias = [
-    { src: "assets/decoracao.jpg", w: 900, h: 1195, autor: "Ana Luísa" },
-    { w: 600, h: 420, autor: "Marina", tons: ["#3b1466", "#0f0620"], seed: 11 },
-    { w: 480, h: 600, autor: "Tio Carlos", tons: ["#5a2a8c", "#22103c"], seed: 7 },
-    { w: 600, h: 600, autor: "Marina", tons: ["#1d0b38", "#6b3aa8"], seed: 23 },
-    { w: 480, h: 680, autor: "Bia", tons: ["#2a0f4a", "#8a5a1c"], seed: 42 },
-    { tipo: "video", ...DEMO_VIDEO, w: 480, h: 640, autor: "Marina" },
-    { w: 600, h: 400, autor: "Tio Carlos", tons: ["#4a1d7a", "#1a0b30"], seed: 5 },
-    { w: 520, h: 660, autor: "Bia", tons: ["#7a4cc0", "#2c1250"], seed: 99 },
-    { w: 600, h: 480, autor: "Vó Lúcia", tons: ["#3a1868", "#a0742a"], seed: 61 },
-    { w: 480, h: 640, autor: "Pedro", tons: ["#25104a", "#5c3296"], seed: 77 }
-  ].map(m => ({ tipo: "foto", ...m, src: m.src || fotoExemplo(m.w, m.h, m.seed, m.tons) }));
 
-  const parede = $("parede");
-  const fontes = m => (m.webm ? `<source src="${m.webm}" type="video/webm">` : "") + `<source src="${m.src}"${m.webm ? ' type="video/mp4"' : ""}>`;
-  const loopSvg = '<span class="selo" aria-hidden="true"><svg><use href="#i-loop"/></svg></span>';
-  function montarParede() {
-    parede.innerHTML = midias.map((m, i) => `
-      <button type="button" class="foto${m.nova ? " nova" : ""}" data-i="${i}" aria-label="Abrir ${m.tipo === "video" ? "vídeo" : "foto"} de ${esc(m.autor)}">
-        ${m.tipo === "video"
-          ? (m.capa ? `<img src="${m.capa}" width="${m.w}" height="${m.h}" alt="Vídeo de ${esc(m.autor)}" decoding="async">`
-                    : `<video width="${m.w}" height="${m.h}" muted playsinline preload="metadata">${fontes(m)}</video>`) + loopSvg
-          : `<img src="${m.src}" width="${m.w}" height="${m.h}" alt="Foto de ${esc(m.autor)}" decoding="async">`}
-      </button>`).join("");
+  /* ---------- Galeria ---------- */
+  const midias = [], ids = new Set();
+  let proxima = null, iniciou = false, carregando = false;
+  const parede = $("parede"), estado = $("estado"), fimLista = $("fim-lista");
+  function cartao(m) {
+    const quem = esc(m.autor), base = `type="button" data-id="${esc(m.id)}"`;
+    // Vídeo na parede é só uma capa: baixar todos os vídeos pesaria demais na internet da festa
+    if (m.tipo === "video") return `<button ${base} class="foto video${m.nova ? " nova" : ""}" aria-label="Abrir vídeo de ${quem}">
+        <span class="capa-video" aria-hidden="true"><svg><use href="#i-loop"/></svg><small>Bumerangue</small><b>${quem}</b></span></button>`;
+    return `<button ${base} class="foto carregando${m.nova ? " nova" : ""}" aria-label="Abrir foto de ${quem}">
+        <img src="${esc(m.src)}" alt="Foto de ${quem}" loading="lazy" decoding="async"></button>`;
   }
+  function mostrarEstado(tipo) {
+    estado.hidden = !tipo;
+    estado.innerHTML = tipo === "carregando" ? `<span class="spinner" aria-hidden="true"></span><p>Carregando as fotos…</p>`
+      : tipo === "vazio" ? `<p>Ainda não tem nenhuma foto.</p><small class="so-celular">Toque no <b>+</b> e seja a primeira pessoa a registrar a festa.</small><small class="so-pc">As fotos aparecem aqui assim que os convidados enviarem.</small>`
+      : tipo === "erro" ? `<p>Não deu para carregar a galeria.</p><small>Confira a internet e tente de novo.</small><button type="button" class="btn btn-sec" id="tentar">Tentar de novo</button>`
+      : "";
+  }
+  estado.addEventListener("click", e => { if (e.target.id === "tentar") carregarMais(); });
+  async function carregarMais() {
+    if (carregando || (iniciou && !proxima)) return;
+    carregando = true; if (!midias.length) mostrarEstado("carregando");
+    let deuCerto = false;
+    try {
+      const d = await buscar(proxima);
+      const novas = d.photos.map(daApi).filter(m => !ids.has(m.id));
+      novas.forEach(m => { ids.add(m.id); midias.push(m); });
+      parede.insertAdjacentHTML("beforeend", novas.map(cartao).join(""));
+      proxima = d.nextPageToken; iniciou = deuCerto = true;
+      mostrarEstado(midias.length ? "" : "vazio");
+    } catch {
+      if (midias.length) avisar("Não deu para carregar mais fotos agora.", true); else mostrarEstado("erro");
+    } finally {
+      carregando = false; fimLista.hidden = !proxima;
+      // se a página não encheu a tela, o observador não dispara de novo: pede a próxima já
+      if (deuCerto && proxima && fimLista.getBoundingClientRect().top < innerHeight + 600) setTimeout(carregarMais, 0);
+    }
+  }
+  // Fotos novas de outros convidados entram no topo, sem recarregar a página
+  async function atualizar(automatico) {
+    if (!iniciou || carregando || $("app").hidden || (automatico && document.hidden)) return;
+    try {
+      const novas = (await buscar()).photos.map(daApi).filter(m => !ids.has(m.id));
+      if (!novas.length) return;
+      novas.forEach(m => ids.add(m.id)); midias.unshift(...novas);
+      parede.insertAdjacentHTML("afterbegin", novas.map(cartao).join("")); mostrarEstado("");
+    } catch {}
+  }
+  setInterval(() => atualizar(true), 45000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) atualizar(); });
+  new IntersectionObserver(e => { if (e[0].isIntersecting) carregarMais(); }, { rootMargin: "600px" }).observe(fimLista);
+  parede.addEventListener("load", e => e.target.closest?.(".foto")?.classList.remove("carregando"), true);
+  parede.addEventListener("error", e => { const f = e.target.closest?.(".foto"); if (f) f.classList.replace("carregando", "quebrada"); }, true);
 
   /* ---------- Troca de telas ---------- */
   function abrirApp() {
     $("abertura").hidden = true; $("boas").hidden = true; $("app").hidden = false;
     lanternasLigadas = false;
     $("ola").innerHTML = meuNome ? `Olá, <b>${esc(meuNome)}</b>` : "";
-    montarParede(); scrollTo(0, 0);
+    scrollTo(0, 0); if (!iniciou) carregarMais();
   }
   $("form-nome").addEventListener("submit", e => {
     e.preventDefault();
     const n = $("seu-nome").value.trim().replace(/\s+/g, " ");
-    if (n.length < 2) { $("erro-nome").hidden = false; $("seu-nome").focus(); return; }
+    if (!nomeValido(n)) {
+      $("erro-nome").textContent = n.length < 2 ? "Digite seu nome para continuar." : "Use só letras, números, espaço, ponto ou hífen, sem emoji.";
+      $("erro-nome").hidden = false; $("seu-nome").focus(); return;
+    }
     meuNome = n; salvarNome(n); abrirApp();
   });
   $("seu-nome").addEventListener("input", () => $("erro-nome").hidden = true);
 
   /* ---------- Lightbox ---------- */
   const lb = $("lightbox"), palco = $("lb-palco");
-  let atual = 0, voltar = null;
-  function abrir(i) {
-    atual = (i + midias.length) % midias.length; const m = midias[atual];
-    palco.innerHTML = m.tipo === "video"
-      ? `<video muted loop playsinline autoplay aria-label="Vídeo de ${esc(m.autor)}">${fontes(m)}</video>`
-      : `<img src="${m.src}" alt="Foto de ${esc(m.autor)}">`;
-    $("lb-autor").textContent = m.autor;
-    $("lb-contador").textContent = `${atual + 1} / ${midias.length}`;
-    if (lb.hidden) { voltar = document.activeElement; lb.hidden = false; document.body.style.overflow = "hidden"; pausarBrilhos(true); $("lb-fechar").focus(); }
+  let atual = 0, voltar = null, urlVideo = null, pedidoVideo = 0;
+  // O vídeo é baixado inteiro antes de tocar: o backend não responde por partes (Range),
+  // e sem isso o Safari do iPhone não toca o vídeo direto da URL
+  async function mostrarVideo(m) {
+    const n = ++pedidoVideo;
+    palco.innerHTML = `<span class="spinner" aria-hidden="true"></span>`;
+    try {
+      let url = m.local;
+      if (!url) { const r = await fetch(m.src); if (!r.ok) throw 0; url = URL.createObjectURL(await r.blob()); }
+      if (n !== pedidoVideo) { if (url !== m.local) URL.revokeObjectURL(url); return; }
+      if (url !== m.local) urlVideo = url;
+      palco.innerHTML = `<video src="${url}" muted loop playsinline autoplay aria-label="Vídeo de ${esc(m.autor)}"></video>`;
+    } catch { if (n === pedidoVideo) palco.innerHTML = `<p class="lb-erro">Não deu para abrir o vídeo.</p>`; }
   }
-  function fechar() { lb.hidden = true; palco.innerHTML = ""; document.body.style.overflow = ""; pausarBrilhos(false); voltar?.focus(); }
-  parede.addEventListener("click", e => { const f = e.target.closest(".foto"); if (f) abrir(+f.dataset.i); });
+  function soltarVideo() { pedidoVideo++; if (urlVideo) { URL.revokeObjectURL(urlVideo); urlVideo = null; } }
+  function abrir(i) {
+    if (!midias.length) return;
+    soltarVideo();
+    atual = (i + midias.length) % midias.length; const m = midias[atual];
+    if (m.tipo === "video") mostrarVideo(m);
+    else palco.innerHTML = `<img src="${esc(m.local || m.src)}" alt="Foto de ${esc(m.autor)}">`;
+    $("lb-autor").textContent = m.autor;
+    $("lb-contador").textContent = `${atual + 1} / ${midias.length}${proxima ? "+" : ""}`;
+    if (lb.hidden) { voltar = document.activeElement; lb.hidden = false; document.body.style.overflow = "hidden"; pausarBrilhos(true); $("lb-fechar").focus(); }
+    if (atual >= midias.length - 3) carregarMais();
+    // a foto do lado já vem baixando: o deslize fica sem tela vazia
+    [atual + 1, atual - 1].map(j => midias[(j + midias.length) % midias.length])
+      .forEach(v => { if (v.tipo === "foto" && !v.local) new Image().src = v.src; });
+  }
+  function fechar() { soltarVideo(); lb.hidden = true; palco.innerHTML = ""; document.body.style.overflow = ""; pausarBrilhos(false); voltar?.focus(); }
+  parede.addEventListener("click", e => { const f = e.target.closest(".foto"); if (f) abrir(midias.findIndex(m => m.id === f.dataset.id)); });
   $("lb-fechar").onclick = fechar;
   $("lb-ant").onclick = () => abrir(atual - 1);
   $("lb-prox").onclick = () => abrir(atual + 1);
@@ -711,20 +802,25 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   fundo.onclick = fecharFolha;
 
   /* ---------- Câmera própria ---------- */
-  const cam = $("camera"), aoVivo = $("cam-ao-vivo"), simulada = $("cam-simulada"), obt = $("obturador"),
+  const cam = $("camera"), aoVivo = $("cam-ao-vivo"), obt = $("obturador"),
         anel = $("anel"), tempo = $("cam-tempo"), dica = $("cam-dica"), revisao = $("cam-revisao"), revMidia = $("rev-midia");
+  const btnPub = $("publicar"), btnRef = $("refazer");
   const ANEL = 289;
-  let modo = "foto", fluxo = null, frente = false, gravando = false, t0 = 0, raf = 0, gravador = null, pedacos = [], capturado = null;
-  $("cam-rolo").style.backgroundImage = `url("${simulada.src}")`;
+  // MP4 primeiro: toca em qualquer celular; o Chrome mais antigo só grava WebM
+  const MIME_GRAVACAO = ["video/mp4", "video/webm"].find(t => window.MediaRecorder?.isTypeSupported?.(t)) || "";
+  let modo = "foto", fluxo = null, frente = false, gravando = false, t0 = 0, raf = 0, gravador = null, pedacos = [], capturado = null, enviando = false;
+  const paraJpeg = c => new Promise((ok, falha) => c.toBlob(b => b ? ok(b) : falha(new Error("toBlob")), "image/jpeg", .85));
+  // lado máximo de 1920 px: foto de câmera 4K pesa demais para subir na rede da festa
+  function encaixar(w, h) { const k = Math.min(1, FOTO_MAX_LADO / Math.max(w, h)); const c = document.createElement("canvas"); c.width = Math.round(w * k); c.height = Math.round(h * k); return c; }
 
   async function ligarCamera() {
     pararFluxo();
     try {
       fluxo = await navigator.mediaDevices.getUserMedia({ video: { facingMode: frente ? "user" : "environment" }, audio: false });
-      aoVivo.srcObject = fluxo; aoVivo.hidden = false; simulada.hidden = true; $("cam-aviso").hidden = true;
+      aoVivo.srcObject = fluxo; aoVivo.hidden = false; $("cam-sem").hidden = true; obt.disabled = false;
     } catch {
-      // Sem permissão (ou nesta prévia): visor simulado com a foto da decoração
-      fluxo = null; aoVivo.hidden = true; simulada.hidden = false; $("cam-aviso").hidden = false;
+      // Sem permissão ou sem câmera: dá para escolher do rolo do celular
+      fluxo = null; aoVivo.hidden = true; $("cam-sem").hidden = false; obt.disabled = true;
     }
   }
   function pararFluxo() { fluxo?.getTracks().forEach(tr => tr.stop()); fluxo = null; }
@@ -732,7 +828,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     cam.hidden = false; revisao.hidden = true; document.body.style.overflow = "hidden"; pausarBrilhos(true);
     definirModo(modo); ligarCamera(); obt.focus();
   }
-  function fecharCamera() { pararGravacao(true); pararFluxo(); cam.hidden = true; document.body.style.overflow = ""; pausarBrilhos(false); $("mais").focus(); }
+  function fecharCamera() {
+    if (enviando) return;
+    pararGravacao(true); pararFluxo(); descartar(); cam.hidden = true; document.body.style.overflow = ""; pausarBrilhos(false); $("mais").focus();
+  }
   $("mais").onclick = abrirCamera;
   $("cam-fechar").onclick = fecharCamera;
   $("cam-virar").onclick = () => { frente = !frente; if (fluxo) ligarCamera(); };
@@ -752,25 +851,21 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   });
 
   /* Foto: toque */
-  function fotografar() {
+  async function fotografar() {
+    if (!fluxo || !aoVivo.videoWidth) return;
     const f = $("cam-flash"); f.classList.remove("on"); void f.offsetWidth; f.classList.add("on");
-    let src = simulada.src, w = 900, h = 1195;
-    if (fluxo && aoVivo.videoWidth) {
-      // lado máximo de 1920 px: foto de câmera 4K pesa demais para subir na rede da festa
-      const k = Math.min(1, 1920 / Math.max(aoVivo.videoWidth, aoVivo.videoHeight));
-      const c = document.createElement("canvas"); c.width = Math.round(aoVivo.videoWidth * k); c.height = Math.round(aoVivo.videoHeight * k);
-      c.getContext("2d").drawImage(aoVivo, 0, 0, c.width, c.height); src = c.toDataURL("image/jpeg", .85); w = c.width; h = c.height;
-    }
-    setTimeout(() => revisar({ tipo: "foto", src, w, h }), 280);
+    const c = encaixar(aoVivo.videoWidth, aoVivo.videoHeight);
+    c.getContext("2d").drawImage(aoVivo, 0, 0, c.width, c.height);
+    try { const blob = await paraJpeg(c); revisar({ tipo: "foto", blob, src: URL.createObjectURL(blob) }); }
+    catch { avisar("Não deu para tirar a foto. Tente de novo.", true); }
   }
 
   /* Vídeo: segurar; o anel enche até 5 s e para sozinho */
   function iniciarGravacao() {
-    if (gravando) return;
+    if (gravando || !fluxo || !window.MediaRecorder) return;
+    try { gravador = new MediaRecorder(fluxo, MIME_GRAVACAO ? { mimeType: MIME_GRAVACAO } : undefined); } catch { gravador = null; return; }
     gravando = true; t0 = performance.now(); cam.classList.add("gravando"); tempo.hidden = false; pedacos = [];
-    if (fluxo && window.MediaRecorder) {
-      try { gravador = new MediaRecorder(fluxo); gravador.ondataavailable = e => e.data.size && pedacos.push(e.data); gravador.start(); } catch { gravador = null; }
-    }
+    gravador.ondataavailable = e => e.data.size && pedacos.push(e.data); gravador.start();
     const passo = () => {
       const s = (performance.now() - t0) / 1000;
       anel.style.strokeDashoffset = String(ANEL * (1 - Math.min(s / VIDEO_MAX_S, 1)));
@@ -779,24 +874,20 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     };
     raf = requestAnimationFrame(passo);
   }
-  function pararGravacao(descartar) {
+  function pararGravacao(descartarGravacao) {
     if (!gravando) return;
     gravando = false; cancelAnimationFrame(raf);
-    const s = (performance.now() - t0) / 1000;
+    const s = (performance.now() - t0) / 1000, g = gravador; gravador = null;
     cam.classList.remove("gravando"); tempo.hidden = true; anel.style.strokeDashoffset = String(ANEL);
     const fim = () => {
-      if (descartar) return;
+      if (descartarGravacao) return;
       if (s < .6) { dica.textContent = "Segure o botão para gravar"; dica.classList.remove("balanca"); void dica.offsetWidth; dica.classList.add("balanca"); return; }
-      if (pedacos.length) {
-        const url = URL.createObjectURL(new Blob(pedacos, { type: gravador?.mimeType || "video/webm" }));
-        revisar({ tipo: "video", src: url, w: aoVivo.videoWidth || 480, h: aoVivo.videoHeight || 640 });
-      } else {
-        // Prévia sem câmera: usa o bumerangue de exemplo
-        revisar({ tipo: "video", ...DEMO_VIDEO, w: 480, h: 640 });
-      }
+      if (!pedacos.length) return avisar("Não deu para gravar. Tente de novo.", true);
+      // sem o ";codecs=..." no tipo: o backend compara o tipo exato (video/mp4, video/webm)
+      const blob = new Blob(pedacos, { type: (g?.mimeType || MIME_GRAVACAO || "video/webm").split(";")[0] });
+      revisar({ tipo: "video", blob, src: URL.createObjectURL(blob) });
     };
-    if (gravador && gravador.state !== "inactive") { gravador.onstop = fim; gravador.stop(); } else fim();
-    gravador = null;
+    if (g && g.state !== "inactive") { g.onstop = fim; g.stop(); } else fim();
   }
   obt.addEventListener("click", () => { if (modo === "foto") fotografar(); });
   obt.addEventListener("pointerdown", e => { if (modo === "video") { e.preventDefault(); obt.setPointerCapture?.(e.pointerId); iniciarGravacao(); } });
@@ -806,48 +897,103 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   obt.addEventListener("contextmenu", e => e.preventDefault());
 
   /* Escolher do rolo do celular */
-  $("cam-arquivo").addEventListener("change", e => {
+  async function reduzirFoto(arq) {
+    const url = URL.createObjectURL(arq), img = new Image();
+    try {
+      img.src = url; await img.decode();
+      const c = encaixar(img.naturalWidth, img.naturalHeight);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      return await paraJpeg(c); // também converte PNG/HEIC para JPEG, que o backend aceita
+    } finally { URL.revokeObjectURL(url); }
+  }
+  $("cam-arquivo").addEventListener("change", async e => {
     const arq = e.target.files && e.target.files[0]; e.target.value = "";
     if (!arq) return;
-    const url = URL.createObjectURL(arq);
-    if (arq.type.startsWith("image/")) return revisar({ tipo: "foto", src: url });
-    if (!arq.type.startsWith("video/")) return;
-    const v = document.createElement("video"); v.preload = "metadata"; v.muted = true; v.src = url;
+    if (arq.type.startsWith("image/")) {
+      try { const blob = await reduzirFoto(arq); revisar({ tipo: "foto", blob, src: URL.createObjectURL(blob) }); }
+      catch { avisar("Não deu para abrir essa foto. Escolha outra.", true); }
+      return;
+    }
+    if (!TIPOS_VIDEO.includes(arq.type)) return avisar("Esse arquivo não é aceito. Escolha uma foto ou um vídeo MP4, WebM ou MOV.", true);
+    if (arq.size > VIDEO_MAX_MB * MB) return avisar(`Esse vídeo tem ${Math.ceil(arq.size / MB)} MB. O limite é ${VIDEO_MAX_MB} MB.`, true);
+    const url = URL.createObjectURL(arq), v = document.createElement("video");
+    v.preload = "metadata"; v.muted = true; v.src = url;
+    v.onerror = () => { URL.revokeObjectURL(url); avisar("Não deu para abrir esse vídeo. Escolha outro.", true); };
     v.onloadedmetadata = () => {
       // folga pequena: o servidor recusa acima de 5 s
-      if (v.duration > VIDEO_MAX_S + .15) return avisar(`Esse vídeo tem ${v.duration.toFixed(1).replace(".", ",")} s. Escolha um de até ${VIDEO_MAX_S} segundos.`, true);
-      revisar({ tipo: "video", src: url, w: v.videoWidth, h: v.videoHeight });
+      if (v.duration > VIDEO_MAX_S + .15) { URL.revokeObjectURL(url); return avisar(`Esse vídeo tem ${v.duration.toFixed(1).replace(".", ",")} s. Escolha um de até ${VIDEO_MAX_S} segundos.`, true); }
+      revisar({ tipo: "video", blob: arq, src: url });
     };
   });
 
   /* Revisão: Refazer ou Enviar */
+  function descartar() { if (capturado) URL.revokeObjectURL(capturado.src); capturado = null; revMidia.innerHTML = ""; revisao.hidden = true; }
   function revisar(m) {
-    capturado = m;
+    descartar(); capturado = m;
     revMidia.innerHTML = m.tipo === "video"
-      ? `<video muted loop playsinline autoplay>${fontes(m)}</video>`
+      ? `<video src="${m.src}" muted loop playsinline autoplay></video>`
       : `<img src="${m.src}" alt="Sua foto">`;
     $("rev-legenda").innerHTML = `Vai para a galeria como ${m.tipo === "video" ? "vídeo" : "foto"} de <b>${esc(meuNome || "você")}</b>`;
-    revisao.hidden = false; $("publicar").focus();
+    btnPub.textContent = "Enviar"; revisao.hidden = false; btnPub.focus();
   }
-  $("refazer").onclick = () => { revisao.hidden = true; revMidia.innerHTML = ""; capturado = null; obt.focus(); };
-  $("publicar").onclick = () => {
-    if (!capturado) return;
-    const el = revMidia.firstElementChild;
-    const w = capturado.w || el.naturalWidth || el.videoWidth || 600, h = capturado.h || el.naturalHeight || el.videoHeight || 600;
-    midias.unshift({ ...capturado, w, h, autor: meuNome || "Você", nova: true });
-    const eraVideo = capturado.tipo === "video"; capturado = null; revMidia.innerHTML = "";
-    fecharCamera(); montarParede(); scrollTo({ top: 0, behavior: reduz ? "auto" : "smooth" });
-    avisar(eraVideo ? "Seu vídeo está na galeria" : "Sua foto está na galeria");
+  $("refazer").onclick = () => { descartar(); obt.focus(); };
+  // XHR em vez de fetch para mostrar o progresso do envio (a internet de festa costuma ser lenta)
+  function enviar(m) {
+    return new Promise((ok, falha) => {
+      const fd = new FormData();
+      fd.append("photo", m.blob, `${m.tipo}.${EXT[m.blob.type] || "bin"}`);
+      const x = new XMLHttpRequest();
+      x.open("POST", `${API}/photos`);
+      x.setRequestHeader("X-Username", meuNome);
+      x.timeout = 120000;
+      x.upload.onprogress = e => { if (e.lengthComputable) btnPub.textContent = `Enviando… ${Math.round(e.loaded / e.total * 100)}%`; };
+      x.onload = () => {
+        let d = {}; try { d = JSON.parse(x.responseText); } catch {}
+        if (x.status === 201) ok(d); else falha(new Error(d.error || `Não deu para enviar (erro ${x.status}).`));
+      };
+      x.onerror = () => falha(new Error("Sem conexão agora. Confira a internet e tente de novo."));
+      x.ontimeout = () => falha(new Error("A internet está lenta demais. Tente de novo."));
+      x.send(fd);
+    });
+  }
+  btnPub.onclick = async () => {
+    if (!capturado || enviando) return;
+    enviando = true; btnPub.disabled = btnRef.disabled = true; btnPub.textContent = "Enviando…";
+    try {
+      const p = await enviar(capturado);
+      // mostra a cópia que já está no aparelho, sem baixar de novo o que acabou de subir
+      const m = { ...daApi(p), autor: p.uploadedBy || meuNome, local: capturado.src, nova: true };
+      if (m.tipo === "foto") m.src = capturado.src;
+      ids.add(m.id); midias.unshift(m); parede.insertAdjacentHTML("afterbegin", cartao(m)); mostrarEstado("");
+      capturado = null; enviando = false;
+      fecharCamera(); scrollTo({ top: 0, behavior: reduz ? "auto" : "smooth" });
+      avisar(m.tipo === "video" ? "Seu vídeo está na galeria" : "Sua foto está na galeria");
+    } catch (err) {
+      avisar(err.message, true); btnPub.textContent = "Tentar de novo";
+    } finally { enviando = false; btnPub.disabled = btnRef.disabled = false; }
   };
 
   /* "Como usar" */
   $("nav-ajuda").onclick = () => abrirFolha($("folha-ajuda"), $("ajuda-ok"));
   $("ajuda-ok").onclick = fecharFolha;
-  $("nav-galeria").onclick = () => { scrollTo({ top: 0, behavior: reduz ? "auto" : "smooth" }); };
+  $("nav-galeria").onclick = () => { scrollTo({ top: 0, behavior: reduz ? "auto" : "smooth" }); atualizar(); };
 
+  // Tab fica dentro do que está aberto por cima (foto ampliada, câmera/revisão ou "Como usar")
+  function prenderFoco(e) {
+    const d = !lb.hidden ? lb : !cam.hidden ? (revisao.hidden ? cam : revisao) : folhaAberta;
+    if (!d) return;
+    const itens = [...d.querySelectorAll("button, input, [tabindex]:not([tabindex='-1'])")]
+      .filter(el => !el.disabled && !el.closest("[hidden]") && el.getClientRects().length);
+    if (!itens.length) return;
+    const primeiro = itens[0], ultimo = itens[itens.length - 1], ativo = document.activeElement;
+    if (!d.contains(ativo)) { e.preventDefault(); primeiro.focus(); }
+    else if (e.shiftKey && ativo === primeiro) { e.preventDefault(); ultimo.focus(); }
+    else if (!e.shiftKey && ativo === ultimo) { e.preventDefault(); primeiro.focus(); }
+  }
   addEventListener("keydown", e => {
+    if (e.key === "Tab") return prenderFoco(e);
     if (!lb.hidden) { if (e.key === "Escape") fechar(); else if (e.key === "ArrowRight") abrir(atual + 1); else if (e.key === "ArrowLeft") abrir(atual - 1); }
-    else if (!cam.hidden && e.key === "Escape") { if (!revisao.hidden) $("refazer").click(); else fecharCamera(); }
+    else if (!cam.hidden && e.key === "Escape") { if (enviando) return; if (!revisao.hidden) $("refazer").click(); else fecharCamera(); }
     else if (e.key === "Escape") fecharFolha();
   });
 
