@@ -48,6 +48,8 @@ assets/og.jpg         prévia do link no WhatsApp (1200x630)
 assets/favicon.svg    ícone da aba (+ apple-touch-icon.png)
 qr.html               plaquinhas com QR code para as mesas (4 por A4)
 404.html              página de erro no tema da festa
+robots.txt            pede para buscadores não indexarem nada
+QUALIDADE.md          checklist do padrão de qualidade do estúdio, marcado
 ```
 
 ## QR code das mesas

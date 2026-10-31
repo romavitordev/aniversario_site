@@ -1,0 +1,4 @@
+# Galeria privada da festa: nada aqui deve aparecer em buscadores.
+# Só vale na raiz do domínio (ex.: domínio próprio); no GitHub Pages de projeto, quem protege é o "noindex" das páginas.
+User-agent: *
+Disallow: /

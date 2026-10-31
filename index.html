@@ -23,7 +23,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap">
+<!-- Fontes sem bloquear a primeira pintura: o texto aparece na fonte do sistema e troca quando a do Google chega -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap"></noscript>
 <style>
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 body { margin: 0; }
@@ -171,6 +173,8 @@ button, input { font: inherit; }
 }
 .entrar input::placeholder { color: rgba(201,174,240,.72); } /* 5,6:1 sobre o campo (AA pede 4,5:1) */
 .entrar input:focus { border-color: var(--ouro-claro); }
+/* LGPD: muitos convidados são menores de idade, então quem envia precisa saber quem vê */
+.nota-privacidade, .folha .nota-privacidade { margin: 4px 0 0; font-size: .76rem; line-height: 1.45; color: var(--lilas); text-align: center; }
 .erro { color: #ffc7c7; font-size: .85rem; text-align: left; margin: 0; }
 .btn {
   font-weight: 500; font-size: 1rem; letter-spacing: .03em; text-decoration: none; text-align: center;
@@ -461,6 +465,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
       <input id="seu-nome" name="nome" type="text" autocomplete="given-name" maxlength="30" placeholder="Seu nome" enterkeyhint="go">
       <p class="erro" id="erro-nome" hidden>Digite seu nome para continuar.</p>
       <button class="btn btn-ouro" type="submit">Prosseguir</button>
+      <p class="nota-privacidade">Ao enviar, sua foto ou vídeo aparece na galeria da festa com o seu nome, para quem tiver o link do site. Quer tirar alguma? Fale com a família da Ana Luísa.</p>
     </form>
 
   </div>
@@ -556,6 +561,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <li><span class="icone"><svg aria-hidden="true"><use href="#i-galeria"/></svg></span>
       <span><b>Vai pra galeria</b><small>assinado por você</small></span></li>
   </ol>
+  <p class="nota-privacidade">Suas fotos e vídeos aparecem na galeria com o seu nome, para quem tiver o link do site. Quer tirar alguma? Fale com a família da Ana Luísa.</p>
   <button type="button" class="btn btn-ouro" id="ajuda-ok">Entendi</button>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -769,6 +775,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     $("lb-contador").textContent = `${atual + 1} / ${midias.length}${proxima ? "+" : ""}`;
     if (lb.hidden) { voltar = document.activeElement; lb.hidden = false; document.body.style.overflow = "hidden"; pausarBrilhos(true); $("lb-fechar").focus(); }
     if (atual >= midias.length - 3) carregarMais();
+    // a foto do lado já vem baixando: o deslize fica sem tela vazia
+    [atual + 1, atual - 1].map(j => midias[(j + midias.length) % midias.length])
+      .forEach(v => { if (v.tipo === "foto" && !v.local) new Image().src = v.src; });
   }
   function fechar() { soltarVideo(); lb.hidden = true; palco.innerHTML = ""; document.body.style.overflow = ""; pausarBrilhos(false); voltar?.focus(); }
   parede.addEventListener("click", e => { const f = e.target.closest(".foto"); if (f) abrir(midias.findIndex(m => m.id === f.dataset.id)); });
@@ -969,7 +978,20 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   $("ajuda-ok").onclick = fecharFolha;
   $("nav-galeria").onclick = () => { scrollTo({ top: 0, behavior: reduz ? "auto" : "smooth" }); atualizar(); };
 
+  // Tab fica dentro do que está aberto por cima (foto ampliada, câmera/revisão ou "Como usar")
+  function prenderFoco(e) {
+    const d = !lb.hidden ? lb : !cam.hidden ? (revisao.hidden ? cam : revisao) : folhaAberta;
+    if (!d) return;
+    const itens = [...d.querySelectorAll("button, input, [tabindex]:not([tabindex='-1'])")]
+      .filter(el => !el.disabled && !el.closest("[hidden]") && el.getClientRects().length);
+    if (!itens.length) return;
+    const primeiro = itens[0], ultimo = itens[itens.length - 1], ativo = document.activeElement;
+    if (!d.contains(ativo)) { e.preventDefault(); primeiro.focus(); }
+    else if (e.shiftKey && ativo === primeiro) { e.preventDefault(); ultimo.focus(); }
+    else if (!e.shiftKey && ativo === ultimo) { e.preventDefault(); primeiro.focus(); }
+  }
   addEventListener("keydown", e => {
+    if (e.key === "Tab") return prenderFoco(e);
     if (!lb.hidden) { if (e.key === "Escape") fechar(); else if (e.key === "ArrowRight") abrir(atual + 1); else if (e.key === "ArrowLeft") abrir(atual - 1); }
     else if (!cam.hidden && e.key === "Escape") { if (enviando) return; if (!revisao.hidden) $("refazer").click(); else fecharCamera(); }
     else if (e.key === "Escape") fecharFolha();
