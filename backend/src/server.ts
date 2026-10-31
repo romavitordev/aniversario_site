@@ -30,9 +30,13 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
         return;
     }
 
-    res.status(415).json({
-        error: 'Tipo de arquivo não permitido. Use JPG, PNG, WebP ou vídeo MP4, WebM ou MOV.',
-    });
+    // só o fileFilter lança INVALID_TYPE; qualquer outro erro (ex.: Drive fora do ar) é 500
+    if (err instanceof Error && err.message === 'INVALID_TYPE') {
+        res.status(415).json({
+            error: 'Tipo de arquivo não permitido. Use JPG, PNG, WebP ou vídeo MP4, WebM ou MOV.',
+        });
+        return;
+    }
 
     console.error(err);
     res.status(500).json({ error: 'Erro interno do servidor.' });

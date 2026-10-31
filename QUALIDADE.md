@@ -3,7 +3,7 @@
 Análise do front contra o `PADRAO-QUALIDADE-SITES.md` do estúdio, em 27/10/2026 (ajustes de design aplicados no mesmo dia), no branch `texto/momentos-inesqueciveis`.
 Legenda: `[x]` feito · `[~]` parcial · `[ ]` pendente · `n/a` não se aplica (com o motivo).
 
-O backend é do Richard e ainda não está neste repositório: as seções 3 (Backend) e 6 ficam para quando ele chegar.
+O backend do Richard entrou em `backend/` em 30/10/2026. A seção 3 (Backend) ainda não foi auditada; os pontos já vistos na integração estão no README, em "Pontos para o backend".
 
 ## Lighthouse (celular, servidor local)
 
@@ -40,7 +40,7 @@ O que pesa na nota de performance:
 
 ### Conversão
 - n/a CTA, WhatsApp flutuante e prova social: não é site de negócio. O "CTA" é o **+**, que fica sempre visível na barra.
-- [ ] **Estados de carregando, sucesso e erro no envio.** Hoje o "Enviar" só coloca a foto na galeria local. Com o backend vai precisar de: enviando (com o botão travado), erro com "tentar de novo" e aviso se a internet da festa cair no meio.
+- [x] Estados de carregando, sucesso e erro no envio: progresso em %, botões travados durante o envio, mensagem do servidor ou de falta de internet, e "Tentar de novo" sem perder a foto. A galeria também tem estados de carregando, vazio e erro.
 
 ### Performance
 - [ ] Lighthouse mobile ≥ 90 (está em 81, ver acima).
@@ -74,7 +74,7 @@ Aqui está o ponto mais sério: o site recolhe **nome e fotos de convidados, mui
 ## 5. Entrega
 
 - [~] README com stack, como rodar e estrutura [x]. Faltam as referências visuais e as variáveis de ambiente (quando o backend chegar).
-- [ ] **Textos e fotos reais.** A galeria ainda mostra 10 itens de exemplo e o aviso "Prévia com fotos, vídeo e nomes de exemplo". Sai quando o backend estiver ligado.
+- [~] Textos e fotos reais. A galeria agora vem do backend e os exemplos saíram. Faltam a data e o local da festa.
 - [ ] Testado em Chrome, Safari (iOS) e Samsung Internet. Só foi testado no navegador do computador. **O Safari do iPhone é o mais importante**: a gravação de vídeo (`MediaRecorder`) e a câmera se comportam diferente lá.
 - [x] Favicon, ícone do iPhone e imagem de compartilhamento.
 - [x] Página 404.
@@ -92,9 +92,9 @@ O que melhorar:
 - [ ] **Arquivo único com ~860 linhas** (CSS + HTML + JS). Separar em `estilos.css` e `app.js` facilita revisar e deixa o navegador guardar em cache.
 - [ ] **Várias instruções por linha** (ex.: `abrir()`, `pararGravacao()`, `fotografar()`). Fica difícil ler um diff e achar um erro. Um formatador (Prettier) resolve de uma vez.
 - [ ] Dois blocos `<style>`, um no `<head>` e outro no `<body>`. O primeiro põe `padding` de área segura no `:root`, que se soma ao `body::before` e aos `env()` da barra. Juntar num só bloco e conferir no iPhone com notch.
-- [ ] Vazamento de memória pequeno: `URL.createObjectURL` nunca é liberado com `revokeObjectURL` (vídeos gravados e arquivos escolhidos). Numa noite inteira tirando fotos, isso acumula.
+- [x] Memória: as prévias descartadas e os vídeos abertos na foto ampliada agora são liberados com `revokeObjectURL`.
 - [ ] Ao girar o celular, as lanternas são recriadas e a lanterna da pessoa some no meio da animação.
-- [ ] Quando ligar o backend: os endereços das fotos (`src`, `capa`) entram no HTML sem passar por `esc()`. Hoje são fixos; vindos do servidor, precisam ser escapados ou montados com `createElement`.
+- [x] Dados vindos do servidor (id, nome de quem enviou, endereço da foto) passam por `esc()` antes de entrar no HTML.
 - [ ] `qr.html` carrega a biblioteca do cdnjs sem `integrity` (SRI). Se o CDN for comprometido, o QR pode apontar para outro site.
 - [ ] Sem lint, sem testes e sem CI. Para um site deste tamanho, basta um `npx prettier --check` e um `npx html-validate` no GitHub Actions.
 
